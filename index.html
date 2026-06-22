@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>言ノ葉 個人</title>
+<style>
+  :root{
+    --bg:#f4f1e8; --panel:#fbf9f3; --panel2:#efe9da;
+    --ink:#2b2823; --sub:#7c7464; --line:#e0d9c8;
+    --accent:#3d7a8a; --accent2:#a6822f; --ok:#3d7a8a; --warn:#a85a3c;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,"Hiragino Sans","Hiragino Kaku Gothic ProN",sans-serif;
+    padding:14px;max-width:760px;margin:0 auto}
+  h1{font-size:18px;font-weight:700;margin:2px 0 2px;letter-spacing:.04em}
+  .tag{color:var(--sub);font-size:12px;margin-bottom:12px}
+  .modebar{display:flex;gap:8px;margin:8px 0 12px}
+  .modebtn{flex:1;padding:14px 6px;font-size:16px;font-weight:700;border-radius:12px;
+    background:var(--panel2);color:var(--sub);border:1px solid var(--line);cursor:pointer;font-family:inherit;min-height:54px}
+  .modebtn.cur{background:var(--accent);color:#fff;border-color:transparent}
+  .mode{display:none}.mode.active{display:block}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+  label{display:block;font-size:12px;color:var(--sub);margin:0 0 4px}
+  input,select{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:10px;font-size:16px;font-family:inherit}
+  button{border:0;border-radius:12px;padding:14px;font-size:16px;font-weight:700;color:var(--ink);background:var(--panel2);border:1px solid var(--line);cursor:pointer;flex:1;font-family:inherit}
+  button:active{transform:scale(.98)}
+  /* サマリー4枚 */
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;text-align:center}
+  .card .k{font-size:12px;color:var(--sub)}
+  .card .v{font-size:26px;font-weight:700;color:var(--accent2);font-variant-numeric:tabular-nums;margin-top:2px}
+  .card .v.small{font-size:20px}
+  /* 大ボタン2つ（吸った／我慢） */
+  .bigbtns{display:flex;gap:10px;margin-bottom:8px}
+  .bigbtns button{padding:18px;min-height:64px;font-size:17px}
+  .btn-smoke{background:var(--warn);color:#fff;border-color:transparent}
+  .btn-resist{background:var(--ok);color:#fff;border-color:transparent}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+  .chip{flex:0 0 auto;padding:11px 16px;font-size:14px;font-weight:600;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:999px;min-height:44px}
+  .chip.sel{background:var(--accent);color:#fff;border-color:transparent}
+  .hint{font-size:12px;color:var(--sub);margin-top:8px;line-height:1.6}
+  .list .item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+  .list .item:last-child{border-bottom:0}
+  .list .tg{flex:0 0 auto;font-size:11px;font-weight:700;border-radius:999px;padding:3px 9px;border:1px solid var(--line)}
+  .tg.smoke{color:var(--warn)} .tg.resist{color:var(--ok)}
+  .list .mid{flex:1;min-width:0}.list .tm{font-size:11px;color:var(--sub)}
+  .list .del{flex:0 0 auto;width:auto;padding:6px 10px;font-size:12px;background:transparent;color:var(--warn);border:1px solid var(--line)}
+  .rank{display:flex;justify-content:space-between;font-size:14px;padding:7px 2px;border-bottom:1px solid var(--line)}
+  .rank:last-child{border-bottom:0}.rank b{color:var(--accent2);font-variant-numeric:tabular-nums}
+  .empty{color:var(--sub);font-size:13px}
+  details.cfg{background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-bottom:12px;overflow:hidden}
+  details.cfg>summary{list-style:none;cursor:pointer;padding:14px;font-size:14px;font-weight:700;color:var(--accent);background:var(--panel2);min-height:48px}
+  details.cfg>summary::-webkit-details-marker{display:none}
+  .cfgbody{padding:14px}
+  .note{color:var(--sub);font-size:11px;line-height:1.6;margin-top:6px}.note b{color:var(--ink)}
+  .ph{color:var(--sub);font-size:13px;line-height:1.8}
+  .acts{display:flex;gap:10px;margin-top:8px}
+  .sync{font-size:12px;color:var(--sub);margin-top:6px}
+  .err{display:none;background:#f7e3da;border:1px solid var(--warn);color:#8a3d23;padding:10px;border-radius:10px;font-size:12px;margin-bottom:12px;white-space:pre-wrap}
+</style>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
+</head>
+<body>
+  <div class="err" id="err"></div>
+  <h1>言ノ葉 個人 <span style="color:var(--sub);font-size:12px">v0</span></h1>
+  <div class="tag">つよしさん専用｜本人ログインの裏＝あなただけ</div>
+
+  <div class="modebar" id="modebar">
+    <button type="button" class="modebtn cur" data-mode="smoke">禁煙</button>
+    <button type="button" class="modebtn" data-mode="wallet">財布</button>
+  </div>
+
+  <!-- 禁煙 -->
+  <div class="mode active" id="modeSmoke">
+    <div class="cards">
+      <div class="card"><div class="k">禁煙</div><div class="v" id="cDays">―</div></div>
+      <div class="card"><div class="k">今日 吸った</div><div class="v" id="cToday">―</div></div>
+      <div class="card"><div class="k">節約額</div><div class="v small" id="cSave">―</div></div>
+      <div class="card"><div class="k">今日 我慢</div><div class="v" id="cResist">―</div></div>
+    </div>
+
+    <div class="panel">
+      <label>引き金（先に選ぶ）</label>
+      <div class="chips" id="trigChips"></div>
+      <div class="bigbtns" style="margin-top:12px">
+        <button type="button" class="btn-resist" id="resistBtn">吸いたいの我慢した</button>
+        <button type="button" class="btn-smoke" id="smokeBtn">吸った</button>
+      </div>
+      <div class="hint">責めるためじゃない。<b>引き金を見える化して減らす</b>ため。我慢できた1回も、ちゃんと数える。</div>
+    </div>
+
+    <div class="panel">
+      <label>引き金ランキング（何が吸わせてるか）</label>
+      <div id="rank"><div class="empty">まだ無し</div></div>
+    </div>
+
+    <div class="panel">
+      <label>今日の記録</label>
+      <div class="list" id="todayList"><div class="empty">今日はまだ無し</div></div>
+    </div>
+
+    <details class="cfg">
+      <summary>⚙ 設定（禁煙の前提）</summary>
+      <div class="cfgbody">
+        <div class="note">禁煙前は1日 <b id="cfgBase">15</b> 本／1本 <b id="cfgPrice">31</b> 円／開始 <b id="cfgStart">2026-06-17</b>／目標 <b id="cfgTarget">2026-08-15</b>。<br>節約額＝(15本×経過日数 − 実際に吸った累計)×31円。値は後で変えられるようにする。</div>
+      </div>
+    </details>
+  </div>
+
+  <!-- 財布（次に作る） -->
+  <div class="mode" id="modeWallet">
+    <div class="panel"><div class="ph">財布（個人収支）はここに作る。日付・支出/収入・カテゴリ・金額で、月の残り／使いすぎを見える化する。<br>※「言ノ葉_個人マネー」シートの中身を吸収予定。禁煙が動いてから次の一手で。</div></div>
+  </div>
+
+  <!-- クラウド同期 -->
+  <div class="panel" id="syncPanel" style="display:none">
+    <div class="acts">
+      <button type="button" id="loginBtn">Googleでログイン（同期）</button>
+      <button type="button" id="logoutBtn" style="display:none;flex:.6">ログアウト</button>
+    </div>
+    <div class="sync" id="syncState" style="display:block">クラウド同期：未ログイン</div>
+    <div class="note">記録は本人のGoogleアカウント配下（users/{uid}/smoking）に入り、本人だけが読める。</div>
+  </div>
+
+<script>
+window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.style.display="block";e.textContent="エラー: "+m+" ("+l+"行)";}};
+(function(){
+  "use strict";
+  function $(id){return document.getElementById(id);}
+  function nn(v){return (v===undefined||v===null)?"":v;}
+  function yen(n){n=Math.round(Number(n)||0);return "¥"+String(n).replace(/\B(?=(\d{3})+(?!\d))/g,",");}
+
+  /* 設定（あとで編集可にする1か所）*/
+  var CFG={ baseline:15, price:31, start:"2026-06-17", target:"2026-08-15" };
+  var TRIGGERS=["イライラ","仕事前","食後","手持ち無沙汰","付き合い","その他"];
+  var selTrig="";
+
+  function getList(){try{return JSON.parse(localStorage.getItem("cotonoha_smoking")||"[]");}catch(e){return [];}}
+  function setList(l){try{localStorage.setItem("cotonoha_smoking",JSON.stringify(l||[]));}catch(e){}}
+  function recId(x){return (x&&x.id)?String(x.id):(String((x&&x.datetime)||"")+"|"+String((x&&x.type)||""));}
+
+  function todayStr(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2);}
+  function ymd(dt){return String(dt||"").slice(0,10);}
+  function daysSince(start){ // 開始日含む経過日数
+    var s=new Date(start+"T00:00:00"), n=new Date(todayStr()+"T00:00:00");
+    return Math.max(1, Math.round((n-s)/86400000)+1);
+  }
+
+  function buildTriggers(){
+    var box=$("trigChips"),html="";
+    for(var i=0;i<TRIGGERS.length;i++){html+='<span class="chip trig" data-v="'+TRIGGERS[i]+'">'+TRIGGERS[i]+'</span>';}
+    box.innerHTML=html;
+    var chips=box.querySelectorAll(".trig");
+    for(var j=0;j<chips.length;j++){(function(c){c.addEventListener("click",function(){
+      selTrig=(selTrig===c.getAttribute("data-v"))?"":c.getAttribute("data-v");
+      var all=box.querySelectorAll(".trig");
+      for(var k=0;k<all.length;k++){ if(all[k].getAttribute("data-v")===selTrig&&selTrig)all[k].classList.add("sel");else all[k].classList.remove("sel"); }
+    });})(chips[j]);}
+  }
+
+  function add(type){
+    var d=new Date();
+    var rec={ id:"sm|app|"+d.getTime()+"-"+Math.floor(Math.random()*1e6), // 連打でも衝突しないよう乱数付き
+      datetime:d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)+" "+("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2),
+      type:type, trigger:selTrig||"" };
+    var list=getList(); list.unshift(rec); setList(list);
+    Cloud.pushOne(rec);
+    selTrig=""; var all=$("trigChips").querySelectorAll(".trig"); for(var k=0;k<all.length;k++)all[k].classList.remove("sel");
+    refresh();
+  }
+
+  function refresh(){
+    var list=getList(), today=todayStr();
+    var smokedAll=0, todaySmoke=0, todayResist=0, trigCount={};
+    for(var i=0;i<list.length;i++){var x=list[i];
+      if(x.type==="吸った"){ smokedAll++; if(ymd(x.datetime)===today)todaySmoke++; }
+      else if(x.type==="我慢"){ if(ymd(x.datetime)===today)todayResist++; }
+      var key=(x.trigger||"その他");
+      if(!trigCount[key])trigCount[key]={smoke:0,resist:0};
+      if(x.type==="吸った")trigCount[key].smoke++; else trigCount[key].resist++;
+    }
+    var days=daysSince(CFG.start);
+    var saved=Math.max(0,(CFG.baseline*days - smokedAll))*CFG.price;
+    $("cDays").textContent=days+"日目";
+    $("cToday").textContent=todaySmoke+"本";
+    $("cSave").textContent=yen(saved);
+    $("cResist").textContent=todayResist+"回";
+    // 引き金ランキング（吸った数の多い順）
+    var keys=[]; for(var k in trigCount){ if(trigCount.hasOwnProperty(k))keys.push(k); }
+    keys.sort(function(a,b){return trigCount[b].smoke-trigCount[a].smoke;});
+    var rbox=$("rank"),rhtml="";
+    if(!keys.length){ rhtml='<div class="empty">まだ無し</div>'; }
+    else{ for(var r=0;r<keys.length;r++){ var t=trigCount[keys[r]];
+      rhtml+='<div class="rank"><span>'+keys[r].replace(/</g,"&lt;")+'</span><b>吸'+t.smoke+' / 我慢'+t.resist+'</b></div>'; } }
+    rbox.innerHTML=rhtml;
+    // 今日の記録
+    var lbox=$("todayList"),lhtml="";
+    var todays=list.filter(function(x){return ymd(x.datetime)===today;});
+    if(!todays.length){ lhtml='<div class="empty">今日はまだ無し</div>'; }
+    else{ for(var j=0;j<todays.length;j++){var x=todays[j];
+      var cls=x.type==="吸った"?"smoke":"resist";
+      var rid=String(recId(x)).replace(/"/g,"&quot;");
+      lhtml+='<div class="item"><span class="tg '+cls+'">'+x.type+'</span><div class="mid"><div>'+(x.trigger||"—").replace(/</g,"&lt;")+'</div><div class="tm">'+x.datetime.slice(11)+'</div></div>'+
+        '<button type="button" class="del" data-id="'+rid+'">取消</button></div>'; } }
+    lbox.innerHTML=lhtml;
+    var dels=lbox.querySelectorAll(".del");
+    for(var d2=0;d2<dels.length;d2++){(function(b){b.addEventListener("click",function(){del(b.getAttribute("data-id"));});})(dels[d2]);}
+    $("cfgBase").textContent=CFG.baseline;$("cfgPrice").textContent=CFG.price;$("cfgStart").textContent=CFG.start;$("cfgTarget").textContent=CFG.target;
+  }
+  function del(id){
+    if(!confirm("この記録を取り消す？"))return;
+    var list=getList(),out=[];
+    for(var i=0;i<list.length;i++){ if(String(recId(list[i]))!==String(id))out.push(list[i]); }
+    setList(out); Cloud.deleteOne(id); refresh();
+  }
+
+  /* モード切替 */
+  function showMode(name){
+    var ms=[{k:"smoke",id:"Smoke"},{k:"wallet",id:"Wallet"}];
+    for(var i=0;i<ms.length;i++){var box=$("mode"+ms[i].id);if(box){if(ms[i].k===name)box.classList.add("active");else box.classList.remove("active");}}
+    var btns=document.querySelectorAll(".modebtn");
+    for(var j=0;j<btns.length;j++){ if(btns[j].getAttribute("data-mode")===name)btns[j].classList.add("cur");else btns[j].classList.remove("cur"); }
+  }
+
+  /* クラウド同期（焙煎/経費と同作法・smokingツリー）*/
+  var Cloud=(function(){
+    var FB={apiKey:"AIzaSyBrxV8AMiizPv6eCOayGNscb335Hifokko",authDomain:"cotonoha-3812d.firebaseapp.com",projectId:"cotonoha-3812d",storageBucket:"cotonoha-3812d.firebasestorage.app",messagingSenderId:"356717785691",appId:"1:356717785691:web:7b1526c49b0580d9efc57e",databaseURL:"https://cotonoha-3812d-default-rtdb.firebaseio.com"};
+    var ready=false,auth=null,db=null,uid=null,syncing=false;
+    function setState(t){var el=$("syncState");if(el)el.textContent="クラウド同期："+t;}
+    function showButtons(li){var a=$("loginBtn"),b=$("logoutBtn");if(a)a.style.display=li?"none":"";if(b)b.style.display=li?"":"none";}
+    function safeKey(id){return String(id).replace(/[.#$\[\]\/]/g,"_");}
+    function recScore(x){var s=0;if(nn(x&&x.type)!=="")s++;if(nn(x&&x.trigger)!=="")s++;return s;}
+    function mergeLists(a,b){var map={},order=[],L,j,x,id,lists=[a||[],b||[]];
+      for(L=0;L<lists.length;L++){for(j=0;j<lists[L].length;j++){x=lists[L][j];id=recId(x);if(!map[id]){map[id]=x;order.push(id);}else if(recScore(x)>recScore(map[id]))map[id]=x;}}
+      var out=[];for(var i=0;i<order.length;i++)out.push(map[order[i]]);
+      out.sort(function(p,q){return String(q.datetime||"")<String(p.datetime||"")?-1:(String(q.datetime||"")>String(p.datetime||"")?1:0);});
+      return out;}
+    function init(){try{
+      if(typeof firebase==="undefined"||!firebase.initializeApp){setState("CDN読込に失敗（オフラインで通常動作）");return;}
+      if(!firebase.apps||!firebase.apps.length){firebase.initializeApp(FB);}
+      auth=firebase.auth();db=firebase.database();ready=true;
+      var p=$("syncPanel");if(p)p.style.display="block";
+      auth.getRedirectResult().catch(function(){});
+      auth.onAuthStateChanged(function(u){if(u){uid=u.uid;setState("ログイン中（"+(u.displayName||u.email||"あなた")+"）");showButtons(true);pull();}else{uid=null;setState("未ログイン");showButtons(false);}});
+    }catch(e){setState("初期化に失敗（オフラインで通常動作）");}}
+    function login(){try{if(!ready){alert("準備中。少し待って。");return;}var pr=new firebase.auth.GoogleAuthProvider();var sa=(window.navigator.standalone===true)||(window.matchMedia&&window.matchMedia("(display-mode: standalone)").matches);if(sa)auth.signInWithRedirect(pr);else auth.signInWithPopup(pr).catch(function(){auth.signInWithRedirect(pr);});}catch(e){alert("ログイン失敗:"+(e&&e.message?e.message:e));}}
+    function logout(){try{if(auth)auth.signOut();}catch(e){}}
+    function pull(){if(!ready||!uid||syncing)return;syncing=true;try{
+      db.ref("users/"+uid+"/smoking").once("value").then(function(snap){
+        var cloud=[],val=snap.val();if(val){for(var k in val){if(val.hasOwnProperty(k))cloud.push(val[k]);}}
+        var merged=mergeLists(getList(),cloud);setList(merged);refresh();pushAll(merged);
+        setState("同期済み（"+merged.length+"件）");syncing=false;
+      }).catch(function(){setState("読込エラー（ローカルで動作）");syncing=false;});
+    }catch(e){setState("読込エラー（ローカルで動作）");syncing=false;}}
+    function pushAll(list){if(!ready||!uid)return;try{var o={};for(var i=0;i<list.length;i++)o[safeKey(recId(list[i]))]=list[i];db.ref("users/"+uid+"/smoking").set(o).catch(function(){});}catch(e){}}
+    function pushOne(rec){if(!ready||!uid||!rec)return;try{db.ref("users/"+uid+"/smoking/"+safeKey(recId(rec))).set(rec).catch(function(){});}catch(e){}}
+    function deleteOne(id){if(!ready||!uid||!id)return;try{db.ref("users/"+uid+"/smoking/"+safeKey(id)).remove().catch(function(){});}catch(e){}}
+    return {init:init,login:login,logout:logout,pushOne:pushOne,deleteOne:deleteOne,isOn:function(){return !!(ready&&uid);}};
+  })();
+
+  /* 初期化 */
+  buildTriggers();
+  $("smokeBtn").addEventListener("click",function(){add("吸った");});
+  $("resistBtn").addEventListener("click",function(){add("我慢");});
+  var mb=document.querySelectorAll(".modebtn");
+  for(var i=0;i<mb.length;i++){(function(b){b.addEventListener("click",function(){showMode(b.getAttribute("data-mode"));});})(mb[i]);}
+  var lin=$("loginBtn");if(lin)lin.addEventListener("click",function(){Cloud.login();});
+  var lout=$("logoutBtn");if(lout)lout.addEventListener("click",function(){Cloud.logout();});
+  refresh();
+  Cloud.init();
+})();
+</script>
+</body>
+</html>
