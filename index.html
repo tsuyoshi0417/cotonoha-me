@@ -178,6 +178,9 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
   function todayStr(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2);}
   function ymd(v){return String(v||"").slice(0,10);}
   function ym(v){return String(v||"").slice(0,7);}
+  /* 給料日25日起算の月度キー（その期の開始月 YYYY-MM）。25日以降=当月度／24日以前=前月度 */
+  function cycleKey(dateStr){var p=String(dateStr||"").split("-");if(p.length<3)return String(dateStr||"").slice(0,7);var y=+p[0],m=+p[1],d=+p[2];if(d<25){m-=1;if(m<1){m=12;y-=1;}}return y+"-"+("0"+m).slice(-2);}
+  function cycleLabel(key){var p=String(key).split("-"),m=+p[1];return m+"月度";}
   function recId(x){return (x&&x.id)?String(x.id):JSON.stringify(x);}
 
   /* ====== 禁煙 ====== */
@@ -261,20 +264,20 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
     refreshWallet();
   }
   function buildWMonths(){
-    var sel=$("wMonthSel"),l=getWallet(),seen={},ms=[],tm=ym(todayStr());seen[tm]=1;ms.push(tm);
-    for(var i=0;i<l.length;i++){var m=ym(l[i].date);if(m&&!seen[m]){seen[m]=1;ms.push(m);}}
+    var sel=$("wMonthSel"),l=getWallet(),seen={},ms=[],tm=cycleKey(todayStr());seen[tm]=1;ms.push(tm);
+    for(var i=0;i<l.length;i++){var m=cycleKey(l[i].date);if(m&&!seen[m]){seen[m]=1;ms.push(m);}}
     ms.sort(function(a,b){return a<b?1:(a>b?-1:0);});
-    var cur=sel.value,h="";for(var j=0;j<ms.length;j++)h+='<option value="'+ms[j]+'">'+ms[j].replace("-","年")+"月"+'</option>';
+    var cur=sel.value,h="";for(var j=0;j<ms.length;j++)h+='<option value="'+ms[j]+'">'+ms[j].slice(0,4)+"年 "+cycleLabel(ms[j])+"（25日〜）"+'</option>';
     sel.innerHTML=h;sel.value=(cur&&ms.indexOf(cur)>=0)?cur:ms[0];
   }
   function refreshWallet(){
-    var l=getWallet(),tm=ym(todayStr()),inc=0,exp=0;
-    for(var i=0;i<l.length;i++){var x=l[i];if(ym(x.date)!==tm)continue;if(x.type==="収入")inc+=Number(x.amount)||0;else exp+=Number(x.amount)||0;}
+    var l=getWallet(),tm=cycleKey(todayStr()),inc=0,exp=0;
+    for(var i=0;i<l.length;i++){var x=l[i];if(cycleKey(x.date)!==tm)continue;if(x.type==="収入")inc+=Number(x.amount)||0;else exp+=Number(x.amount)||0;}
     $("wIncome").textContent=yen(inc);$("wExpense").textContent=yen(exp);$("wBalance").textContent=yen(inc-exp);
-    $("wInLabel").textContent=tm.replace("-","年")+"月 収入";$("wOutLabel").textContent=tm.replace("-","年")+"月 支出";
+    $("wInLabel").textContent=cycleLabel(tm)+" 収入";$("wOutLabel").textContent=cycleLabel(tm)+" 支出";
     buildWMonths();
     var m=$("wMonthSel").value||tm,by={},te=0,ti=0;
-    for(var j=0;j<l.length;j++){var y=l[j];if(ym(y.date)!==m)continue;if(y.type==="収入"){ti+=Number(y.amount)||0;continue;}var c=y.category||"その他";by[c]=(by[c]||0)+(Number(y.amount)||0);te+=Number(y.amount)||0;}
+    for(var j=0;j<l.length;j++){var y=l[j];if(cycleKey(y.date)!==m)continue;if(y.type==="収入"){ti+=Number(y.amount)||0;continue;}var c=y.category||"その他";by[c]=(by[c]||0)+(Number(y.amount)||0);te+=Number(y.amount)||0;}
     var keys=[];for(var k in by)if(by.hasOwnProperty(k))keys.push(k);keys.sort(function(a,b){return by[b]-by[a];});
     var bb=$("wBreakdown"),bh="";
     if(!keys.length&&!ti)bh='<div class="empty">この月の記録はまだ無し</div>';
