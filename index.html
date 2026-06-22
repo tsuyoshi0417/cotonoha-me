@@ -33,6 +33,10 @@
   .card .k{font-size:12px;color:var(--sub)}
   .card .v{font-size:26px;font-weight:700;color:var(--accent2);font-variant-numeric:tabular-nums;margin-top:2px}
   .card .v.small{font-size:20px}
+  .card .v.muted{font-size:18px;color:var(--sub);font-weight:700}
+  .toast{display:none;background:#eaf1f0;border:1px solid var(--ok);color:#2b4a45;border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:14px;line-height:1.55}
+  @media (prefers-color-scheme: dark){ .toast{background:#22302d;color:#cfe5e0} }
+  .trigother{display:none;width:100%;margin-top:8px}
   .bigbtns{display:flex;gap:10px;margin-bottom:8px}
   .bigbtns button{padding:18px;min-height:64px;font-size:17px}
   .btn-smoke{background:var(--warn);color:#fff;border-color:transparent}
@@ -87,15 +91,17 @@
 
   <!-- 禁煙 -->
   <div class="mode active" id="modeSmoke">
+    <div class="toast" id="toast"></div>
     <div class="cards">
+      <div class="card"><div class="k">今日 我慢できた</div><div class="v" id="cResist">―</div></div>
       <div class="card"><div class="k">禁煙</div><div class="v" id="cDays">―</div></div>
-      <div class="card"><div class="k">今日 吸った</div><div class="v" id="cToday">―</div></div>
-      <div class="card"><div class="k">節約額</div><div class="v small" id="cSave">―</div></div>
-      <div class="card"><div class="k">今日 我慢</div><div class="v" id="cResist">―</div></div>
+      <div class="card"><div class="k">節約額（貯まった）</div><div class="v small" id="cSave">―</div></div>
+      <div class="card"><div class="k">今日 吸った</div><div class="v muted" id="cToday">―</div></div>
     </div>
     <div class="panel">
       <label>引き金（先に選ぶ）</label>
       <div class="chips" id="trigChips"></div>
+      <input class="trigother" id="trigOther" placeholder="その他＝何で吸いたくなった？（自由記述）">
       <div class="bigbtns" style="margin-top:12px">
         <button type="button" class="btn-resist" id="resistBtn">吸いたいの我慢した</button>
         <button type="button" class="btn-smoke" id="smokeBtn">吸った</button>
@@ -185,8 +191,9 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
 
   /* ====== 禁煙 ====== */
   var CFG={baseline:15,price:31,start:"2026-06-17",target:"2026-08-15"};
-  var TRIGGERS=["イライラ","仕事前","食後","手持ち無沙汰","付き合い","その他"];
-  var selTrig="";
+  var TRIGGERS=["イライラ","AIにイライラ","仕事前","食後","手持ち無沙汰","付き合い","その他"];
+  var selTrig="",toastTimer=null;
+  function showToast(msg){var el=$("toast");if(!el)return;el.textContent=msg;el.style.display="block";if(toastTimer)clearTimeout(toastTimer);toastTimer=setTimeout(function(){el.style.display="none";},4000);}
   function getSmoke(){try{return JSON.parse(localStorage.getItem("cotonoha_smoking")||"[]");}catch(e){return [];}}
   function setSmoke(l){try{localStorage.setItem("cotonoha_smoking",JSON.stringify(l||[]));}catch(e){}}
   function daysSince(start){var s=new Date(start+"T00:00:00"),n=new Date(todayStr()+"T00:00:00");return Math.max(1,Math.round((n-s)/86400000)+1);}
@@ -198,14 +205,20 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
     for(var j=0;j<chips.length;j++){(function(c){c.addEventListener("click",function(){
       selTrig=(selTrig===c.getAttribute("data-v"))?"":c.getAttribute("data-v");
       var all=box.querySelectorAll(".trig");for(var k=0;k<all.length;k++){if(all[k].getAttribute("data-v")===selTrig&&selTrig)all[k].classList.add("sel");else all[k].classList.remove("sel");}
+      var ot=$("trigOther");if(ot){ot.style.display=(selTrig==="その他")?"block":"none";if(selTrig==="その他")ot.focus();}
     });})(chips[j]);}
   }
   function addSmoke(type){
     var d=new Date();
-    var rec={id:"sm|app|"+uid4(),datetime:d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)+" "+("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2),type:type,trigger:selTrig||""};
+    var trig=selTrig||"";
+    if(selTrig==="その他"){var ot=($("trigOther").value||"").trim();if(ot)trig=ot;}
+    var rec={id:"sm|app|"+uid4(),datetime:d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)+" "+("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2),type:type,trigger:trig};
     var l=getSmoke();l.unshift(rec);setSmoke(l);Cloud.pushOne("smoking",rec);
     selTrig="";var all=$("trigChips").querySelectorAll(".trig");for(var k=0;k<all.length;k++)all[k].classList.remove("sel");
+    var ot2=$("trigOther");if(ot2){ot2.value="";ot2.style.display="none";}
     refreshSmoke();
+    if(type==="吸った"){ showToast("記録した。1本でも禁煙は続いてる。今日 "+$("cToday").textContent+"（禁煙前なら1日"+CFG.baseline+"本ペース）。"); }
+    else{ showToast("ナイス、1回やり過ごせた。今日 我慢 "+$("cResist").textContent+"。"); }
   }
   function refreshSmoke(){
     var list=getSmoke(),today=todayStr(),smokedAll=0,todaySmoke=0,todayResist=0,tc={};
