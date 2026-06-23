@@ -157,6 +157,18 @@
   @media (prefers-color-scheme: dark){ .bridge{background:#22302d;color:#cfe5e0} }
   /* 支払い方法チップ列（既存.chips/.chip流用・既定の現金は薄く） */
   .paychips .chip.dim{opacity:.7}
+  /* ===== 吸いたい→2分→乗り越えた フロー ===== */
+  .btn-urge{background:var(--accent);color:#fff;border-color:transparent;width:100%}
+  .urge-flow{border:2px solid var(--accent)}
+  .btn-wait{background:var(--ok);color:#fff;border-color:transparent;width:100%}
+  .linklike{display:block;width:100%;background:none;border:0;color:var(--sub);font-size:13px;text-decoration:underline;margin-top:12px;padding:10px;cursor:pointer;font-family:inherit;min-height:44px}
+  .cope{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px;font-size:15px;line-height:1.7;color:var(--ink);margin-bottom:4px}
+  .cope b{color:var(--accent)}
+  .timer{font-size:54px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums;text-align:center;margin:4px 0 12px;letter-spacing:1px}
+  .urge-sub{font-size:13px;color:var(--sub);text-align:center;margin-top:14px;line-height:1.6}
+  .win{font-size:30px;font-weight:700;color:var(--accent2);text-align:center;margin:10px 0 6px}
+  .win-sub{font-size:14px;color:var(--ink);text-align:center;line-height:1.8}
+  .win-sub b{color:var(--accent2);font-variant-numeric:tabular-nums}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
@@ -165,7 +177,7 @@
 <body>
   <div class="err" id="err"></div>
   <a href="https://tsuyoshi0417.github.io/" style="display:inline-block;font-size:13px;color:var(--accent);text-decoration:none;margin-bottom:6px">← ホーム</a>
-  <h1>言ノ葉 個人 <span style="color:var(--sub);font-size:12px">v3</span></h1>
+  <h1>言ノ葉 個人 <span style="color:var(--sub);font-size:12px">v4</span></h1>
   <div class="tag">つよしさん専用｜本人ログインの裏＝あなただけ</div>
 
   <div class="modebar" id="modebar">
@@ -177,7 +189,7 @@
   <div class="mode active" id="modeSmoke">
     <div class="toast" id="toast"></div>
     <div class="cards">
-      <div class="card"><div class="k">今日 我慢できた</div><div class="v" id="cResist">―</div></div>
+      <div class="card"><div class="k">今日 乗り越えた</div><div class="v" id="cResist">―</div></div>
       <div class="card"><div class="k">禁煙に向けて</div><div class="v" id="cDays">―</div></div>
       <div class="card"><div class="k">節約額（貯まった）</div><div class="v small" id="cSave">―</div></div>
       <div class="card"><div class="k">今日 吸った</div><div class="v muted" id="cToday">―</div></div>
@@ -199,10 +211,30 @@
       <div class="chips" id="trigChips"></div>
       <input class="trigother" id="trigOther" placeholder="その他＝何で吸いたくなった？（自由記述）">
       <div class="bigbtns" style="margin-top:12px">
-        <button type="button" class="btn-resist" id="resistBtn">吸いたいの我慢した</button>
-        <button type="button" class="btn-smoke" id="smokeBtn">吸った</button>
+        <button type="button" class="btn-urge" id="urgeBtn">吸いたい</button>
       </div>
-      <div class="hint">責めるためじゃない。<b>引き金を見える化して減らす</b>ため。我慢できた1回も、ちゃんと数える。</div>
+      <div class="hint">吸いたくなったら、まずこれを押す。<b>2分だけ</b>待てば波は引く。乗り越えた1回も、ちゃんと数える。責めるためじゃない。</div>
+    </div>
+
+    <!-- 吸いたい→2分→乗り越えた フロー（「吸いたい」を押すと出る） -->
+    <div class="panel urge-flow" id="urgeFlow" style="display:none">
+      <div id="urgeStep1">
+        <div class="cope" id="copeText">―</div>
+        <div class="bigbtns" style="margin-top:12px">
+          <button type="button" class="btn-wait" id="waitBtn">2分だけ待つ</button>
+        </div>
+        <button type="button" class="linklike" id="smokedNowBtn">…もう吸った（記録だけする）</button>
+      </div>
+      <div id="urgeStep2" style="display:none">
+        <div class="timer" id="urgeTimer">2:00</div>
+        <div class="cope" id="copeText2">―</div>
+        <div class="urge-sub">吸いたい波は2〜3分で必ず引く。今は波の上にいるだけ。</div>
+        <button type="button" class="linklike" id="giveUpBtn">やっぱり吸う（責めない・記録する）</button>
+      </div>
+      <div id="urgeStep3" style="display:none">
+        <div class="win">🌊 乗り越えた</div>
+        <div class="win-sub" id="winSub">―</div>
+      </div>
     </div>
     <div class="panel">
       <label>引き金ランキング（何が吸わせてるか）</label>
@@ -467,18 +499,65 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
       var ot=$("trigOther");if(ot){ot.style.display=(selTrig==="その他")?"block":"none";if(selTrig==="その他")ot.focus();}
     });})(chips[j]);}
   }
-  function addSmoke(type){
+  function addSmoke(type,explicitTrig){
     var d=new Date();
-    var trig=selTrig||"";
-    if(selTrig==="その他"){var ot=($("trigOther").value||"").trim();if(ot)trig=ot;}
+    var trig;
+    if(explicitTrig!==undefined){ trig=explicitTrig||""; }
+    else{ trig=selTrig||""; if(selTrig==="その他"){var ot=($("trigOther").value||"").trim();if(ot)trig=ot;} }
     var rec={id:"sm|app|"+uid4(),datetime:d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)+" "+("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2),type:type,trigger:trig};
     var l=getSmoke();l.unshift(rec);setSmoke(l);Cloud.pushOne("smoking",rec);
     selTrig="";var all=$("trigChips").querySelectorAll(".trig");for(var k=0;k<all.length;k++)all[k].classList.remove("sel");
     var ot2=$("trigOther");if(ot2){ot2.value="";ot2.style.display="none";}
     refreshSmoke();
+    /* 「吸った」だけトースト。「我慢（乗り越えた）」はフローのStep3で祝うのでトーストは出さない */
     if(type==="吸った"){ showToast("記録した。1本でも禁煙は続いてる。今日 "+$("cToday").textContent+"（禁煙前なら1日"+CFG.baseline+"本ペース）。"); }
-    else{ showToast("ナイス、1回やり過ごせた。今日 我慢 "+$("cResist").textContent+"。"); }
   }
+
+  /* ====== 吸いたい→2分→乗り越えた フロー（urge surfing＋実行意図） ====== */
+  /* 引き金別の代替行動カード。{P}=1本の値段に置換。深夜は専用文を優先。 */
+  var COPE={
+    "AIにイライラ":"画面から少し離れて<b>深呼吸を5回</b>。AIは待てる。固まったら「tmt」と打てば俺が立て直す。吸わなくても、ここは前に進む。",
+    "客・仕事でイライラ":"<b>水を一杯</b>飲んで肩の力を抜く。その人はもう去る。あと2分で、この波は通り過ぎる。",
+    "仕事の休憩":"「休憩＝一服」の鎖を、今日1回だけ切ってみる。<b>外の空気を吸う／ガムを一つ</b>。それで休憩はちゃんと回る。",
+    "手持ち無沙汰":"手を別のことへ。<b>焙煎ログかカッピングを1行</b>書く、白湯を一口。退屈は2分で形を変える。",
+    "寝起き・寝る前":"朝/夜の1本は<b>ただの習慣</b>で、体が欲しがってるわけじゃない。<b>白湯を一口</b>。今日はずらすだけでいい。",
+    "お金の不安":"不安の正体は<b>カードの山</b>。1本¥{P}＝吸わない方が山は早く消える。今この2分が、未来の原資に積み上がる。",
+    "食後":"食後の口寂しさは<b>3分で消える</b>。<b>歯を磨く／ガムを一つ</b>。それで満たされる。",
+    "付き合い":"<b>水か烏龍茶を一杯</b>。場は壊れない。今日は「吸わない自分」で居てみる。",
+    "その他":"<b>2分だけ</b>。吸いたい波は、必ず2〜3分で引いていく。今は波の上にいるだけ。"
+  };
+  var COPE_LATE="深夜だ。今の吸いたいは<b>眠れない手持ち無沙汰</b>かも。<b>白湯を一口→灯りを落として横になる</b>。朝の自分が楽になる。";
+  function isLateNight(){var h=new Date().getHours();return (h>=23||h<5);}
+  function getCope(chipKey){
+    var base=isLateNight()?COPE_LATE:(COPE[chipKey]||COPE["その他"]);
+    return base.replace("{P}",CFG.price);
+  }
+  var urgeTrig="",urgeTimer=null,urgeLeft=0;
+  function openUrge(){
+    urgeTrig=selTrig||"";
+    if(selTrig==="その他"){var ot=($("trigOther").value||"").trim();if(ot)urgeTrig=ot;}
+    var cope=getCope(selTrig);
+    $("copeText").innerHTML=cope;$("copeText2").innerHTML=cope;
+    $("urgeStep1").style.display="block";$("urgeStep2").style.display="none";$("urgeStep3").style.display="none";
+    $("urgeFlow").style.display="block";
+    try{$("urgeFlow").scrollIntoView({behavior:"smooth",block:"center"});}catch(e){}
+  }
+  function closeUrge(){if(urgeTimer){clearInterval(urgeTimer);urgeTimer=null;}$("urgeFlow").style.display="none";}
+  function renderUrgeTimer(){var m=Math.floor(urgeLeft/60),s=urgeLeft%60;var el=$("urgeTimer");if(el)el.textContent=m+":"+("0"+s).slice(-2);}
+  function startWait(){
+    urgeLeft=120;
+    $("urgeStep1").style.display="none";$("urgeStep2").style.display="block";
+    renderUrgeTimer();
+    if(urgeTimer)clearInterval(urgeTimer);
+    urgeTimer=setInterval(function(){urgeLeft--;renderUrgeTimer();if(urgeLeft<=0){clearInterval(urgeTimer);urgeTimer=null;winUrge();}},1000);
+  }
+  function winUrge(){
+    addSmoke("我慢",urgeTrig); /* 内部型は我慢（データ互換）・表示は乗り越えた */
+    $("urgeStep2").style.display="none";$("urgeStep3").style.display="block";
+    $("winSub").innerHTML="この2分で、また1回 自分が勝った。<br>今日 乗り越えた <b>"+$("cResist").textContent+"</b>。";
+    setTimeout(function(){closeUrge();},6000);
+  }
+  function urgeSmokedNow(){addSmoke("吸った",urgeTrig);closeUrge();}
   function refreshSmoke(){
     var list=getSmoke(),today=todayStr(),smokedAll=0,todaySmoke=0,todayResist=0,tc={};
     for(var i=0;i<list.length;i++){var x=list[i];
@@ -494,12 +573,12 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
     keys.sort(function(a,b){return tc[b].smoke-tc[a].smoke;});
     var rb=$("rank"),rh="";
     if(!keys.length)rh='<div class="empty">まだ無し</div>';
-    else for(var r=0;r<keys.length;r++)rh+='<div class="rank"><span>'+keys[r].replace(/</g,"&lt;")+'</span><b>吸'+tc[keys[r]].smoke+' / 我慢'+tc[keys[r]].resist+'</b></div>';
+    else for(var r=0;r<keys.length;r++)rh+='<div class="rank"><span>'+keys[r].replace(/</g,"&lt;")+'</span><b>吸'+tc[keys[r]].smoke+' / 乗り越え'+tc[keys[r]].resist+'</b></div>';
     rb.innerHTML=rh;
     var lb=$("todayList"),lh="",td=list.filter(function(x){return ymd(x.datetime)===today;});
     if(!td.length)lh='<div class="empty">今日はまだ無し</div>';
-    else for(var j=0;j<td.length;j++){var y=td[j],cls=y.type==="吸った"?"smoke":"resist",rid=String(recId(y)).replace(/"/g,"&quot;");
-      lh+='<div class="item"><span class="tg '+cls+'">'+y.type+'</span><div class="mid"><div>'+(y.trigger||"—").replace(/</g,"&lt;")+'</div><div class="tm">'+y.datetime.slice(11)+'</div></div><button type="button" class="del" data-id="'+rid+'">取消</button></div>';}
+    else for(var j=0;j<td.length;j++){var y=td[j],cls=y.type==="吸った"?"smoke":"resist",rid=String(recId(y)).replace(/"/g,"&quot;"),lbl=(y.type==="吸った")?"吸った":"乗り越えた";
+      lh+='<div class="item"><span class="tg '+cls+'">'+lbl+'</span><div class="mid"><div>'+(y.trigger||"—").replace(/</g,"&lt;")+'</div><div class="tm">'+y.datetime.slice(11)+'</div></div><button type="button" class="del" data-id="'+rid+'">取消</button></div>';}
     lb.innerHTML=lh;
     var dels=lb.querySelectorAll(".del");for(var d2=0;d2<dels.length;d2++){(function(b){b.addEventListener("click",function(){delSmoke(b.getAttribute("data-id"));});})(dels[d2]);}
     $("cfgBase").textContent=CFG.baseline;$("cfgPrice").textContent=CFG.price;$("cfgStart").textContent=CFG.start;$("cfgTarget").textContent=CFG.target;
@@ -1288,8 +1367,10 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
   var gin=$("goalInput");
   if(gin){var goalApply=function(){var v=parseInt(gin.value,10);if(v&&v>0){setGoal(v);buildGoalChips();refreshSmoke();}};
     gin.addEventListener("change",goalApply);gin.addEventListener("blur",goalApply);}
-  $("smokeBtn").addEventListener("click",function(){addSmoke("吸った");});
-  $("resistBtn").addEventListener("click",function(){addSmoke("我慢");});
+  $("urgeBtn").addEventListener("click",openUrge);
+  $("waitBtn").addEventListener("click",startWait);
+  $("smokedNowBtn").addEventListener("click",urgeSmokedNow);
+  $("giveUpBtn").addEventListener("click",urgeSmokedNow);
   $("wDate").value=todayStr();
   buildWPay();
   setWType("支出");
