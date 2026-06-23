@@ -165,7 +165,7 @@
 <body>
   <div class="err" id="err"></div>
   <a href="https://tsuyoshi0417.github.io/" style="display:inline-block;font-size:13px;color:var(--accent);text-decoration:none;margin-bottom:6px">← ホーム</a>
-  <h1>言ノ葉 個人 <span style="color:var(--sub);font-size:12px">v2</span></h1>
+  <h1>言ノ葉 個人 <span style="color:var(--sub);font-size:12px">v3</span></h1>
   <div class="tag">つよしさん専用｜本人ログインの裏＝あなただけ</div>
 
   <div class="modebar" id="modebar">
@@ -450,7 +450,7 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
     var days=daysSince(CFG.start);
     return Math.max(0,(CFG.baseline*days-smokedAll))*CFG.price;
   }
-  var TRIGGERS=["イライラ","AIにイライラ","仕事前","食後","手持ち無沙汰","付き合い","その他"];
+  var TRIGGERS=["AIにイライラ","客・仕事でイライラ","仕事の休憩","手持ち無沙汰","寝起き・寝る前","お金の不安","食後","付き合い","その他"];
   var selTrig="",toastTimer=null;
   function showToast(msg){var el=$("toast");if(!el)return;el.textContent=msg;el.style.display="block";if(toastTimer)clearTimeout(toastTimer);toastTimer=setTimeout(function(){el.style.display="none";},4000);}
   function getSmoke(){try{return JSON.parse(localStorage.getItem("cotonoha_smoking")||"[]");}catch(e){return [];}}
