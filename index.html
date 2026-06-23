@@ -165,7 +165,7 @@
 <body>
   <div class="err" id="err"></div>
   <a href="https://tsuyoshi0417.github.io/" style="display:inline-block;font-size:13px;color:var(--accent);text-decoration:none;margin-bottom:6px">← ホーム</a>
-  <h1>言ノ葉 個人 <span style="color:var(--sub);font-size:12px">v1</span></h1>
+  <h1>言ノ葉 個人 <span style="color:var(--sub);font-size:12px">v2</span></h1>
   <div class="tag">つよしさん専用｜本人ログインの裏＝あなただけ</div>
 
   <div class="modebar" id="modebar">
@@ -239,6 +239,13 @@
       <div class="b-head"><span class="b-t">この先 出ていくお金</span><span class="b-sum" id="wBillsSum">¥0</span></div>
       <div class="b-sub">計画に入れてあるから大丈夫</div>
       <div class="b-list" id="wBillsList"></div>
+    </div>
+
+    <!-- ならして備える（年に数回どんと来る出費の月割り） -->
+    <div class="bills" id="wLevel" style="display:none">
+      <div class="b-head"><span class="b-t">ならして備える</span><span class="b-sum" id="wLevelSum">¥0/月</span></div>
+      <div class="b-sub">年に数回どんと来る分を、毎月そっと先取り。来ても慌てない。</div>
+      <div class="b-list" id="wLevelList"></div>
     </div>
 
     <!-- カード返済の山 -->
@@ -330,6 +337,28 @@
             <button type="button" id="cbCancelBtn" style="display:none;flex:.6">やめる</button>
           </div>
           <div class="note" style="margin-top:8px">カードの請求が分かったら入れておく。<b>引き落とし日が来ると上の「今日 使える」から先に取り分けて計算</b>される（後から驚かないため）。</div>
+        </div>
+      </div>
+    </details>
+
+    <details class="cfg"><summary>⚙ ならして備える（年に数回の出費）</summary>
+      <div class="cfgbody">
+        <div class="b-list" id="lvList" style="margin-bottom:4px"></div>
+        <div class="fxform" id="lvForm">
+          <div id="lvEditingTag" class="note" style="display:none;color:var(--accent);font-weight:700;margin-bottom:6px"></div>
+          <label>名前</label>
+          <input id="lvName" placeholder="例：住民税 / 自動車税 / 年払いの保険">
+          <div class="row" style="margin-top:8px">
+            <div><label>1年の合計（円）</label><input id="lvYear" type="number" inputmode="numeric" placeholder="例 84000"></div>
+            <div><label>＝月あたり</label><input id="lvPerMonth" type="text" disabled placeholder="自動"></div>
+          </div>
+          <label style="margin-top:8px">メモ（任意）</label>
+          <input id="lvNote" placeholder="例：年4期・6/8/10/1月">
+          <div class="acts2">
+            <button type="button" class="save" id="lvSaveBtn">追加する</button>
+            <button type="button" id="lvCancelBtn" style="display:none;flex:.6">やめる</button>
+          </div>
+          <div class="note" style="margin-top:8px">住民税など<b>年に数回どんと来る出費</b>を1年の合計で入れる。月割りを<b>毎月そっと「今日 使える」から先取り</b>するから、来た月に慌てない。<br><b>注意：</b>ここに入れたものは「カード引き落とし予定」や「固定費」に<b>重複して入れない</b>（二重に引かれる）。</div>
         </div>
       </div>
     </details>
@@ -535,6 +564,21 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
     var seed=[]; /* 公開ソースには実額を置かない＝本人がアプリで追加（非公開クラウドに同期） */
     setCardBills(seed);Cloud.pushAllTree("cardbill",seed);
   }
+
+  /* ===== ならして備える（年に数回の出費の月割り）：localStorage cotonoha_level・Cloud.TREES level ===== */
+  function getLevel(){try{return JSON.parse(localStorage.getItem("cotonoha_level")||"[]");}catch(e){return [];}}
+  function setLevel(l){try{localStorage.setItem("cotonoha_level",JSON.stringify(l||[]));}catch(e){}}
+  function seedLevel(){
+    if(getLevel().length)return;
+    var seed=[]; /* 公開ソースには実額を置かない＝本人がアプリで追加（非公開クラウドに同期） */
+    setLevel(seed);Cloud.pushAllTree("level",seed);
+  }
+  /* 月あたり先取り合計（年額÷12を切り上げで丸めて合算） */
+  function levelMonthlySum(){
+    var l=getLevel(),s=0;
+    for(var i=0;i<l.length;i++){var y=Number(l[i].yearAmount)||0;if(y>0)s+=Math.round(y/12);}
+    return s;
+  }
   function setWType(t){
     wType=t;wCat="";
     $("wTypeOut").className=(t==="支出")?"cur-out":"";
@@ -621,6 +665,7 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
     buildWMonths();
     renderHero(l,tm,exp,dd);
     renderCardBills();
+    renderLevel();
     renderMountain(l,tm);
     renderBridge();
     renderWalletAdvice(l,tm,bal,salary,dd);
@@ -797,6 +842,85 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
     if(cbEditId===id)cbResetForm();
     refreshWallet();
   }
+  /* ====== ならして備える（level） ====== */
+  var lvEditId="";
+  function lvResetForm(){
+    lvEditId="";
+    $("lvName").value="";$("lvYear").value="";$("lvPerMonth").value="";$("lvNote").value="";
+    $("lvSaveBtn").textContent="追加する";$("lvCancelBtn").style.display="none";
+    $("lvEditingTag").style.display="none";$("lvForm").className="fxform";
+  }
+  /* 年額入力に応じて「＝月あたり」を自動表示 */
+  function lvSyncPerMonth(){
+    var y=Math.round(parseFloat(($("lvYear").value||"").trim()));
+    $("lvPerMonth").value=(!isNaN(y)&&y>0)?yen(Math.round(y/12)):"";
+  }
+  function lvStartEdit(id){
+    var l=getLevel(),f=null;for(var i=0;i<l.length;i++)if(String(l[i].id)===String(id)){f=l[i];break;}
+    if(!f)return;
+    lvEditId=id;
+    $("lvName").value=f.name||"";$("lvYear").value=(f.yearAmount!=null?f.yearAmount:"");$("lvNote").value=f.note||"";
+    lvSyncPerMonth();
+    $("lvSaveBtn").textContent="この内容で更新";$("lvCancelBtn").style.display="";
+    $("lvEditingTag").textContent="「"+(f.name||"")+"」を編集中";$("lvEditingTag").style.display="block";
+    $("lvForm").className="fxform editing";$("lvName").focus();
+  }
+  function lvSave(){
+    var name=($("lvName").value||"").trim();
+    if(!name){alert("名前を入れてね（例：住民税）");return;}
+    var yr=Math.round(parseFloat(($("lvYear").value||"").trim()));
+    if(isNaN(yr)||yr<=0){alert("1年の合計を入れてね（1以上）");return;}
+    var note=($("lvNote").value||"").trim();
+    var l=getLevel();
+    if(lvEditId){
+      for(var i=0;i<l.length;i++)if(String(l[i].id)===String(lvEditId)){l[i].name=name;l[i].yearAmount=yr;l[i].note=note;break;}
+    }else{
+      l.push({id:uid4(),name:name,yearAmount:yr,note:note});
+    }
+    setLevel(l);Cloud.pushAllTree("level",l);
+    lvResetForm();refreshWallet();
+  }
+  function lvDel(id){
+    if(!confirm("このならし項目を削除する？"))return;
+    var l=getLevel(),o=[];for(var i=0;i<l.length;i++)if(String(l[i].id)!==String(id))o.push(l[i]);
+    setLevel(o);markTomb(id);Cloud.deleteOne("level",id);Cloud.pushAllTree("level",o);
+    if(lvEditId===id)lvResetForm();
+    refreshWallet();
+  }
+  /* 本体「ならして備える」＋設定内リスト（編集・削除つき） */
+  function renderLevel(){
+    var l=getLevel().slice();
+    l.sort(function(a,b){return (Number(b.yearAmount)||0)-(Number(a.yearAmount)||0);});
+    var per=levelMonthlySum();
+    var box=$("wLevel"),ll=$("wLevelList"),ls=$("wLevelSum");
+    if(box){
+      if(!l.length){box.style.display="none";}
+      else{
+        box.style.display="block";if(ls)ls.textContent=yen(per)+"/月";
+        var bh="";
+        for(var j=0;j<l.length;j++){var y=l[j],m=Math.round((Number(y.yearAmount)||0)/12);
+          var nm=String(y.name||"").replace(/</g,"&lt;")+(y.note?' <span class="tm">'+String(y.note).replace(/</g,"&lt;")+'</span>':"");
+          bh+='<div class="b-row"><span class="b-name">'+nm+'</span><span class="b-amt">'+yen(m)+'/月 <span class="tm">年'+yen(y.yearAmount)+'</span></span></div>';
+        }
+        if(ll)ll.innerHTML=bh;
+      }
+    }
+    /* 設定内：全件に編集/削除 */
+    var lvb=$("lvList");if(lvb){
+      if(!l.length)lvb.innerHTML='<div class="empty">まだ無し</div>';
+      else{var ch="";
+        for(var k=0;k<l.length;k++){var z=l[k],id=String(z.id).replace(/"/g,"&quot;"),m2=Math.round((Number(z.yearAmount)||0)/12);
+          var nm2=String(z.name||"").replace(/</g,"&lt;")+(z.note?' <span class="tm">'+String(z.note).replace(/</g,"&lt;")+'</span>':"");
+          ch+='<div class="b-row"><span class="b-name">'+nm2+'</span><span class="b-amt">'+yen(m2)+'/月 <span class="tm">年'+yen(z.yearAmount)+'</span></span>'
+            +'<button type="button" class="fxedit" data-id="'+id+'">編集</button>'
+            +'<button type="button" class="b-del" data-id="'+id+'">削除</button></div>';
+        }
+        lvb.innerHTML=ch;
+        var ed=lvb.querySelectorAll(".fxedit");for(var a=0;a<ed.length;a++){(function(b){b.addEventListener("click",function(){lvStartEdit(b.getAttribute("data-id"));});})(ed[a]);}
+        var dl=lvb.querySelectorAll(".b-del");for(var d=0;d<dl.length;d++){(function(b){b.addEventListener("click",function(){lvDel(b.getAttribute("data-id"));});})(dl[d]);}
+      }
+    }
+  }
   /* 設定内リスト（編集・削除つき）＋本体「この先 出ていくお金」 */
   function renderCardBills(){
     var l=getCardBills().slice(),today=todayStr(),tm=cycleKey(today);
@@ -854,7 +978,8 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
     var today=todayStr();
     var futFixed=upcomingFixedSum(tm,today);
     var futCard=cardBillsUpcomingSum(tm,today);
-    var dispo=income - curExp - futFixed - futCard;
+    var levelM=levelMonthlySum(); /* 年に数回の出費の月割り＝毎月そっと先取り */
+    var dispo=income - curExp - futFixed - futCard - levelM;
     /* 締めまでの残り日数(今日含む)。daysToDeadline=次の25日までの日数＝当期に残る日数(今日含む)。0除算ガード */
     var remainDays=Math.max(1,dd);
     var perDay=dispo/remainDays;
@@ -868,7 +993,7 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
         if(hn)hn.style.display="none";
       }
     }
-    if(hs)hs.textContent="締めまで あと"+Math.max(1,dd)+"日（今日含む）／残り "+yen(dispo);
+    if(hs)hs.textContent="締めまで あと"+Math.max(1,dd)+"日（今日含む）／残り "+yen(dispo)+(levelM>0?"（ならし "+yen(levelM)+"/月 先取り済）":"");
   }
 
   /* ====== カード返済の山バー（当期に出ていくカード総額のうち、まだ来てない割合） ====== */
@@ -1097,7 +1222,7 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
         if(!map[id]){map[id]=x;order.push(id);}}
       var out=[];for(var i=0;i<order.length;i++)out.push(map[order[i]]);
       out.sort(function(p,q){return String(q[tf]||"")<String(p[tf]||"")?-1:(String(q[tf]||"")>String(p[tf]||"")?1:0);});return out;}
-    var TREES=[{name:"smoking",tf:"datetime",get:getSmoke,set:setSmoke,refresh:refreshSmoke},{name:"wallet",tf:"date",get:getWallet,set:setWallet,refresh:refreshWallet},{name:"fixed",tf:"id",get:getFixed,set:setFixed,refresh:function(){renderFxList();refreshWallet();}},{name:"cardbill",tf:"id",get:getCardBills,set:setCardBills,refresh:function(){renderCardBills();refreshWallet();}}];
+    var TREES=[{name:"smoking",tf:"datetime",get:getSmoke,set:setSmoke,refresh:refreshSmoke},{name:"wallet",tf:"date",get:getWallet,set:setWallet,refresh:refreshWallet},{name:"fixed",tf:"id",get:getFixed,set:setFixed,refresh:function(){renderFxList();refreshWallet();}},{name:"cardbill",tf:"id",get:getCardBills,set:setCardBills,refresh:function(){renderCardBills();refreshWallet();}},{name:"level",tf:"id",get:getLevel,set:setLevel,refresh:function(){renderLevel();refreshWallet();}}];
     function init(){try{
       if(typeof firebase==="undefined"||!firebase.initializeApp){setState("CDN読込に失敗（オフラインで通常動作）");return;}
       if(!firebase.apps||!firebase.apps.length)firebase.initializeApp(FB);
@@ -1121,7 +1246,7 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
     }
     function pullTrees(){
       var done=0,tot=TREES.length+1; /* +1=budget */
-      function fin(){if(done>=tot){setState("同期済み（禁煙"+getSmoke().length+"・財布"+getWallet().length+"・固定費"+getFixed().length+"・カード予定"+getCardBills().length+"）");syncing=false;}}
+      function fin(){if(done>=tot){setState("同期済み（禁煙"+getSmoke().length+"・財布"+getWallet().length+"・固定費"+getFixed().length+"・カード予定"+getCardBills().length+"・ならし"+getLevel().length+"）");syncing=false;}}
       TREES.forEach(function(T){try{
         db.ref("users/"+uid+"/"+T.name).once("value").then(function(snap){
           var cloud=[],val=snap.val();if(val)for(var k in val)if(val.hasOwnProperty(k))cloud.push(val[k]);
@@ -1189,6 +1314,12 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
   $("cbSaveBtn").addEventListener("click",cbSave);
   $("cbCancelBtn").addEventListener("click",cbResetForm);
   renderCardBills();
+  /* ならして備える */
+  seedLevel();
+  $("lvSaveBtn").addEventListener("click",lvSave);
+  $("lvCancelBtn").addEventListener("click",lvResetForm);
+  $("lvYear").addEventListener("input",lvSyncPerMonth);
+  renderLevel();
   var mb=document.querySelectorAll(".modebtn");
   for(var i=0;i<mb.length;i++){(function(b){b.addEventListener("click",function(){showMode(b.getAttribute("data-mode"));});})(mb[i]);}
   var lin=$("loginBtn");if(lin)lin.addEventListener("click",function(){Cloud.login();});
