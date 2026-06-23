@@ -100,18 +100,18 @@
   .goalchips .chip.sel{background:var(--accent2);color:#fff;border-color:transparent}
   .card .v.warn{color:var(--warn)} .card .v.neutral{color:var(--sub)}
   /* 固定費・サブスク */
-  .fxlist .fxitem{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+  .fxlist .fxitem{display:flex;align-items:center;gap:7px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
   .fxlist .fxitem:last-child{border-bottom:0}
   .fxlist .fxitem.off{opacity:.5}
-  .fxlist .fxmid{flex:1;min-width:0}
+  .fxlist .fxmid{flex:1 1 auto;min-width:0}
   .fxlist .fxmid .fxname{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .fxlist .fxmid .fxsub{font-size:11px;color:var(--sub)}
+  .fxlist .fxmid .fxsub{font-size:11px;color:var(--sub);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .fxlist .fxamt{flex:0 0 auto;font-variant-numeric:tabular-nums;font-weight:700}
   .fxlist .fxamt.var{color:var(--sub);font-weight:600;font-size:12px}
-  .fxlist .fxtgl{flex:0 0 auto;width:auto;padding:5px 10px;font-size:11px;background:transparent;border:1px solid var(--line)}
+  .fxlist .fxtgl{flex:0 0 auto;width:auto;padding:5px 8px;font-size:11px;background:transparent;border:1px solid var(--line)}
   .fxlist .fxtgl.on{color:var(--ok);border-color:var(--ok)} .fxlist .fxtgl.offc{color:var(--sub)}
-  .fxlist .fxedit{flex:0 0 auto;width:auto;padding:5px 9px;font-size:11px;background:transparent;border:1px solid var(--line);color:var(--accent)}
-  .fxlist .fxdel{flex:0 0 auto;width:auto;padding:5px 9px;font-size:11px;background:transparent;color:var(--warn);border:1px solid var(--line)}
+  .fxlist .fxedit{flex:0 0 auto;width:auto;padding:5px 8px;font-size:11px;background:transparent;border:1px solid var(--line);color:var(--accent)}
+  .fxlist .fxdel{flex:0 0 auto;width:auto;padding:5px 8px;font-size:11px;background:transparent;color:var(--warn);border:1px solid var(--line)}
   .fxform{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}
   .fxform.editing{border:1px solid var(--accent);border-radius:10px;padding:10px;margin-top:10px}
   /* 金額待ちリマインド（控えめ・中立） */
@@ -141,6 +141,17 @@
   .bills .b-row .b-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .bills .b-row .b-amt{flex:0 0 auto;font-variant-numeric:tabular-nums;font-weight:700;color:var(--ink)}
   .bills .b-row .b-del{flex:0 0 auto;width:auto;padding:5px 9px;font-size:11px;background:transparent;color:var(--sub);border:1px solid var(--line)}
+  /* 設定内のカード予定リスト（#cbList）は .bills の外＝独自にレイアウト。
+     編集/削除ボタンが付くので名前を縮め、金額＋ボタンを右に寄せ、375幅でも崩さない。 */
+  #cbList .b-row{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+  #cbList .b-row:last-child{border-bottom:0}
+  #cbList .b-row.soon{border-left:3px solid var(--accent2);padding-left:8px;margin-left:-8px}
+  #cbList .b-date{flex:0 0 auto;font-weight:700;font-variant-numeric:tabular-nums;color:var(--ink)}
+  #cbList .b-name{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #cbList .b-name .tm{display:none} /* 狭幅ではメモは隠す（名前優先） */
+  #cbList .b-amt{flex:0 0 auto;font-variant-numeric:tabular-nums;font-weight:700;color:var(--ink)}
+  #cbList .fxedit,#cbList .b-del{flex:0 0 auto;width:auto;padding:5px 8px;font-size:11px;background:transparent;border:1px solid var(--line)}
+  #cbList .fxedit{color:var(--accent)} #cbList .b-del{color:var(--warn)}
   /* 橋一言（禁煙の節約・前向きレイヤー） */
   .bridge{background:#eaf1f0;border:1px solid var(--ok);border-radius:12px;padding:11px 13px;margin-bottom:12px;font-size:13px;line-height:1.55;color:#2b4a45}
   @media (prefers-color-scheme: dark){ .bridge{background:#22302d;color:#cfe5e0} }
@@ -384,6 +395,16 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
     return y+"-"+("0"+m).slice(-2)+"-"+("0"+pd).slice(-2);
   }
 
+  /* ====== 削除済みtombstone（削除を覚える＝同期で復活させない） ======
+     localStorage cotonoha_me_tombstones＝{id:削除時刻ms,...}。RTDB users/{uid}/tombstones と双方向同期。
+     merge時にtombstoneにあるidを除外する。wallet/fixed/cardbill/smoking 共通でidは全アプリ一意。 */
+  var TOMB_KEY="cotonoha_me_tombstones";
+  function getTombs(){try{var o=JSON.parse(localStorage.getItem(TOMB_KEY)||"{}");return (o&&typeof o==="object")?o:{};}catch(e){return {};}}
+  function setTombs(o){try{localStorage.setItem(TOMB_KEY,JSON.stringify(o||{}));}catch(e){}}
+  function isTomb(id){var o=getTombs();return Object.prototype.hasOwnProperty.call(o,String(id));}
+  /* 削除を記録（ローカル＋クラウド）。idはrecIdの文字列。 */
+  function markTomb(id){if(!id)return;var o=getTombs();o[String(id)]=Date.now();setTombs(o);Cloud.pushTomb(String(id),o[String(id)]);}
+
   /* ====== 設定（閾値・ゴールを1か所に集約） ====== */
   var CFG={baseline:15,price:31,start:"2026-06-17",target:"2026-08-15"};
   /* 未来の原資ゴール（節約額の到達目標） */
@@ -490,7 +511,7 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
     var gi=$("goalInput");
     if(gi&&GOAL_PRESETS.indexOf(cur)<0)gi.value=cur;
   }
-  function delSmoke(id){if(!confirm("この記録を取り消す？"))return;var l=getSmoke(),o=[];for(var i=0;i<l.length;i++)if(String(recId(l[i]))!==String(id))o.push(l[i]);setSmoke(o);Cloud.deleteOne("smoking",id);refreshSmoke();}
+  function delSmoke(id){if(!confirm("この記録を取り消す？"))return;var l=getSmoke(),o=[];for(var i=0;i<l.length;i++)if(String(recId(l[i]))!==String(id))o.push(l[i]);setSmoke(o);markTomb(id);Cloud.deleteOne("smoking",id);refreshSmoke();}
 
   /* ====== 財布 ====== */
   var WEXP=["食費","外食","お酒","タバコ","お菓子","日用品","交通","医療","通信","趣味・娯楽","衣類","交際","その他"];
@@ -502,7 +523,7 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
 
   /* ===== 前提（収入と家賃）：localStorage cotonoha_me_budget・Cloud.TREES budget ===== */
   var BUDGET_DEFAULT={income:0,incomeDay:25,rentDay:27,rent:0};
-  function getBudget(){try{var b=JSON.parse(localStorage.getItem("cotonoha_me_budget")||"null");if(!b||typeof b!=="object")return {income:BUDGET_DEFAULT.income,incomeDay:BUDGET_DEFAULT.incomeDay,rentDay:BUDGET_DEFAULT.rentDay};return {income:(b.income!=null?+b.income:BUDGET_DEFAULT.income),incomeDay:(b.incomeDay!=null?+b.incomeDay:BUDGET_DEFAULT.incomeDay),rentDay:(b.rentDay!=null?+b.rentDay:BUDGET_DEFAULT.rentDay)};}catch(e){return {income:BUDGET_DEFAULT.income,incomeDay:BUDGET_DEFAULT.incomeDay,rentDay:BUDGET_DEFAULT.rentDay};}}
+  function getBudget(){try{var b=JSON.parse(localStorage.getItem("cotonoha_me_budget")||"null");if(!b||typeof b!=="object")return {income:BUDGET_DEFAULT.income,incomeDay:BUDGET_DEFAULT.incomeDay,rentDay:BUDGET_DEFAULT.rentDay,updatedAt:0};return {income:(b.income!=null?+b.income:BUDGET_DEFAULT.income),incomeDay:(b.incomeDay!=null?+b.incomeDay:BUDGET_DEFAULT.incomeDay),rentDay:(b.rentDay!=null?+b.rentDay:BUDGET_DEFAULT.rentDay),updatedAt:(b.updatedAt!=null?+b.updatedAt:0)};}catch(e){return {income:BUDGET_DEFAULT.income,incomeDay:BUDGET_DEFAULT.incomeDay,rentDay:BUDGET_DEFAULT.rentDay,updatedAt:0};}}
   function setBudget(b){try{localStorage.setItem("cotonoha_me_budget",JSON.stringify(b||{}));}catch(e){}}
   function seedBudget(){try{if(localStorage.getItem("cotonoha_me_budget")==null){setBudget({income:BUDGET_DEFAULT.income,incomeDay:BUDGET_DEFAULT.incomeDay,rentDay:BUDGET_DEFAULT.rentDay});}}catch(e){}}
 
@@ -678,7 +699,7 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
     box.innerHTML=h;box.style.display="block";
   }
 
-  function delWallet(id){if(!confirm("この収支を削除する？"))return;var l=getWallet(),o=[];for(var i=0;i<l.length;i++)if(String(recId(l[i]))!==String(id))o.push(l[i]);setWallet(o);Cloud.deleteOne("wallet",id);refreshWallet();}
+  function delWallet(id){if(!confirm("この収支を削除する？"))return;var l=getWallet(),o=[];for(var i=0;i<l.length;i++)if(String(recId(l[i]))!==String(id))o.push(l[i]);setWallet(o);markTomb(id);Cloud.deleteOne("wallet",id);refreshWallet();}
   function exportWCSV(){
     var l=getWallet();function c(v){return String(nn(v)).replace(/[\n,]/g," ");}
     var lines=[["日付","種別","カテゴリ","金額","項目・店","メモ"].join(",")];
@@ -717,7 +738,8 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
     if(!(incDay>=1&&incDay<=31)){alert("入る日は1〜31で入れてね");return;}
     if(isNaN(rentV)||rentV<0){alert("家賃を入れてね（0以上）");return;}
     if(!(rentDay>=1&&rentDay<=31)){alert("家賃の引き落とし日は1〜31で入れてね");return;}
-    setBudget({income:inc,incomeDay:incDay,rentDay:rentDay,rent:rentV});
+    setBudget({income:inc,incomeDay:incDay,rentDay:rentDay,rent:rentV,updatedAt:Date.now()});
+    Cloud.pushBudget(getBudget()); /* クラウドへ反映（pull時の読み戻し経路と対） */
     /* 固定費 rent に反映（額・日を同期。無ければ作る＝重複しない） */
     var fx=getFixed(),found=false;
     for(var i=0;i<fx.length;i++)if(fx[i].slug==="rent"){fx[i].amount=rentV;fx[i].payDay=rentDay;found=true;break;}
@@ -771,7 +793,7 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
   function cbDel(id){
     if(!confirm("このカード予定を削除する？"))return;
     var l=getCardBills(),o=[];for(var i=0;i<l.length;i++)if(String(l[i].id)!==String(id))o.push(l[i]);
-    setCardBills(o);Cloud.pushAllTree("cardbill",o);
+    setCardBills(o);markTomb(id);Cloud.deleteOne("cardbill",id);Cloud.pushAllTree("cardbill",o);
     if(cbEditId===id)cbResetForm();
     refreshWallet();
   }
@@ -1005,7 +1027,7 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
   function fxDel(id){
     if(!confirm("この固定費を削除する？（過去に自動計上された明細は残ります）"))return;
     var fx=getFixed(),o=[];for(var i=0;i<fx.length;i++)if(fx[i].id!==id)o.push(fx[i]);
-    setFixed(o);Cloud.pushAllTree("fixed",o);
+    setFixed(o);markTomb(id);Cloud.deleteOne("fixed",id);Cloud.pushAllTree("fixed",o);
     if(fxEditId===id)fxResetForm();
     renderFxList();
   }
@@ -1070,10 +1092,12 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
     function showButtons(li){var a=$("loginBtn"),b=$("logoutBtn");if(a)a.style.display=li?"none":"";if(b)b.style.display=li?"":"none";}
     function safeKey(id){return String(id).replace(/[.#$\[\]\/]/g,"_");}
     function merge(a,b,tf){var map={},order=[],L,j,x,id,ls=[a||[],b||[]];
-      for(L=0;L<ls.length;L++)for(j=0;j<ls[L].length;j++){x=ls[L][j];id=recId(x);if(!map[id]){map[id]=x;order.push(id);}}
+      for(L=0;L<ls.length;L++)for(j=0;j<ls[L].length;j++){x=ls[L][j];id=recId(x);
+        if(isTomb(id))continue; /* 削除済み＝復活させない */
+        if(!map[id]){map[id]=x;order.push(id);}}
       var out=[];for(var i=0;i<order.length;i++)out.push(map[order[i]]);
       out.sort(function(p,q){return String(q[tf]||"")<String(p[tf]||"")?-1:(String(q[tf]||"")>String(p[tf]||"")?1:0);});return out;}
-    var TREES=[{name:"smoking",tf:"datetime",get:getSmoke,set:setSmoke,refresh:refreshSmoke},{name:"wallet",tf:"date",get:getWallet,set:setWallet,refresh:refreshWallet},{name:"fixed",tf:"id",get:getFixed,set:setFixed,refresh:function(){renderFxList();refreshWallet();}}];
+    var TREES=[{name:"smoking",tf:"datetime",get:getSmoke,set:setSmoke,refresh:refreshSmoke},{name:"wallet",tf:"date",get:getWallet,set:setWallet,refresh:refreshWallet},{name:"fixed",tf:"id",get:getFixed,set:setFixed,refresh:function(){renderFxList();refreshWallet();}},{name:"cardbill",tf:"id",get:getCardBills,set:setCardBills,refresh:function(){renderCardBills();refreshWallet();}}];
     function init(){try{
       if(typeof firebase==="undefined"||!firebase.initializeApp){setState("CDN読込に失敗（オフラインで通常動作）");return;}
       if(!firebase.apps||!firebase.apps.length)firebase.initializeApp(FB);
@@ -1083,18 +1107,54 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
     }catch(e){setState("初期化に失敗（オフラインで通常動作）");}}
     function login(){try{if(!ready){alert("準備中。少し待って。");return;}var pr=new firebase.auth.GoogleAuthProvider();var sa=(window.navigator.standalone===true)||(window.matchMedia&&window.matchMedia("(display-mode: standalone)").matches);if(sa)auth.signInWithRedirect(pr);else auth.signInWithPopup(pr).catch(function(){auth.signInWithRedirect(pr);});}catch(e){alert("ログイン失敗:"+(e&&e.message?e.message:e));}}
     function logout(){try{if(auth)auth.signOut();}catch(e){}}
-    function pull(){if(!ready||!uid||syncing)return;syncing=true;var done=0,tot=TREES.length;
+    function pull(){if(!ready||!uid||syncing)return;syncing=true;
+      /* ①先にtombstoneを取り込む（クラウド＋ローカルの和）→ ②各ツリーmerge時に削除を尊重できる */
+      db.ref("users/"+uid+"/tombstones").once("value").then(function(snap){
+        var cloudT=snap.val()||{},localT=getTombs(),merged={},kk;
+        for(kk in localT)if(localT.hasOwnProperty(kk))merged[kk]=localT[kk];
+        for(kk in cloudT)if(cloudT.hasOwnProperty(kk))merged[kk]=cloudT[kk];
+        setTombs(merged);
+        /* ローカルにしか無かったtombstoneはクラウドへ反映 */
+        try{db.ref("users/"+uid+"/tombstones").set(merged).catch(function(){});}catch(e){}
+        pullTrees();
+      }).catch(function(){pullTrees();}); /* tombstones読めなくても本体は進める */
+    }
+    function pullTrees(){
+      var done=0,tot=TREES.length+1; /* +1=budget */
+      function fin(){if(done>=tot){setState("同期済み（禁煙"+getSmoke().length+"・財布"+getWallet().length+"・固定費"+getFixed().length+"・カード予定"+getCardBills().length+"）");syncing=false;}}
       TREES.forEach(function(T){try{
         db.ref("users/"+uid+"/"+T.name).once("value").then(function(snap){
           var cloud=[],val=snap.val();if(val)for(var k in val)if(val.hasOwnProperty(k))cloud.push(val[k]);
           var merged=merge(T.get(),cloud,T.tf);T.set(merged);T.refresh();pushAll(T.name,merged);
-          done++;if(done>=tot){setState("同期済み（禁煙"+getSmoke().length+"・財布"+getWallet().length+"・固定費"+getFixed().length+"）");syncing=false;}
-        }).catch(function(){done++;setState("読込エラー（ローカルで動作）");if(done>=tot)syncing=false;});
-      }catch(e){done++;if(done>=tot)syncing=false;}});}
+          done++;fin();
+        }).catch(function(){done++;setState("読込エラー（ローカルで動作）");fin();});
+      }catch(e){done++;fin();}});
+      /* budgetは単一オブジェクト：クラウドを読み、updatedAt後勝ちでローカルと突合して復元 */
+      pullBudget(function(){done++;fin();});
+    }
+    /* budget（単一オブジェクト）の読み戻し。updatedAtが新しい方を採用（無ければクラウド優先で復元） */
+    function pullBudget(cb){
+      try{db.ref("users/"+uid+"/budget").once("value").then(function(snap){
+        var cloud=snap.val();
+        if(cloud&&typeof cloud==="object"){
+          var local=getBudget(),lu=+(local.updatedAt||0),cu=+(cloud.updatedAt||0);
+          if(cu>=lu){ /* クラウドが同等以上に新しい＝復元（新規端末はlu=0なので必ず復元される） */
+            setBudget(cloud);buildBudgetForm();seedRent();runFixedCosts();refreshWallet();renderFxList();
+          }else{ /* ローカルが新しい＝クラウドへ反映 */
+            pushBudget(local);
+          }
+        }else{ /* クラウド未保存＝ローカルを上げる */
+          pushBudget(getBudget());
+        }
+        if(cb)cb();
+      }).catch(function(){if(cb)cb();});}catch(e){if(cb)cb();}
+    }
+    function pushBudget(b){if(!ready||!uid||!b)return;try{db.ref("users/"+uid+"/budget").set(b).catch(function(){});}catch(e){}}
+    function pushTomb(id,ts){if(!ready||!uid||!id)return;try{db.ref("users/"+uid+"/tombstones/"+safeKey(id)).set(ts||Date.now()).catch(function(){});}catch(e){}}
     function pushAll(tree,list){if(!ready||!uid)return;try{var o={};for(var i=0;i<list.length;i++)o[safeKey(recId(list[i]))]=list[i];db.ref("users/"+uid+"/"+tree).set(o).catch(function(){});}catch(e){}}
     function pushOne(tree,rec){if(!ready||!uid||!rec)return;try{db.ref("users/"+uid+"/"+tree+"/"+safeKey(recId(rec))).set(rec).catch(function(){});}catch(e){}}
     function deleteOne(tree,id){if(!ready||!uid||!id)return;try{db.ref("users/"+uid+"/"+tree+"/"+safeKey(id)).remove().catch(function(){});}catch(e){}}
-    return {init:init,login:login,logout:logout,pushOne:pushOne,pushAllTree:pushAll,deleteOne:deleteOne,isOn:function(){return !!(ready&&uid);}};
+    return {init:init,login:login,logout:logout,pushOne:pushOne,pushAllTree:pushAll,deleteOne:deleteOne,pushBudget:pushBudget,pushTomb:pushTomb,isOn:function(){return !!(ready&&uid);}};
   })();
 
   /* 初期化 */
