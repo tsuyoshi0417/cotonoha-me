@@ -76,6 +76,76 @@
   .acts2{display:flex;gap:10px;margin-top:8px}
   .sync{font-size:12px;color:var(--sub);margin-top:6px}
   .err{display:none;background:#f7e3da;border:1px solid var(--warn);color:#8a3d23;padding:10px;border-radius:10px;font-size:12px;margin-bottom:12px;white-space:pre-wrap}
+  /* 進捗バー（節約の原資・禁煙の経過） */
+  .goalbar{margin:6px 0 2px}
+  .goalbar .gb-top{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;margin-bottom:6px}
+  .goalbar .gb-top .gb-l{color:var(--sub)}
+  .goalbar .gb-top .gb-v{font-variant-numeric:tabular-nums;font-weight:700;color:var(--ink)}
+  .goalbar .gb-track{height:14px;background:var(--panel2);border:1px solid var(--line);border-radius:999px;overflow:hidden}
+  .goalbar .gb-fill{height:100%;border-radius:999px;transition:width .35s ease}
+  .goalbar .gb-fill.gold{background:var(--accent2)}
+  .goalbar .gb-fill.teal{background:var(--accent)}
+  .goalbar .gb-sub{font-size:12px;color:var(--sub);margin-top:5px}
+  /* アドバイス枠（経費.htmlの advise に倣う・左ボーダー3色） */
+  .advice{margin-bottom:12px}
+  .advice .a{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--line);border-radius:10px;padding:11px 13px;margin-bottom:8px;font-size:13px;line-height:1.6}
+  .advice .a:last-of-type{margin-bottom:6px}
+  .advice .a.good{border-left-color:var(--ok)}
+  .advice .a.neutral{border-left-color:var(--accent2)}
+  .advice .a.warn{border-left-color:var(--warn)}
+  .advice .a b{font-variant-numeric:tabular-nums}
+  .advice .a-foot{font-size:11px;color:var(--sub);margin-top:2px}
+  /* 設定内：ゴール額のチップ＋自由入力 */
+  .goalchips{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 8px}
+  .goalchips .chip.sel{background:var(--accent2);color:#fff;border-color:transparent}
+  .card .v.warn{color:var(--warn)} .card .v.neutral{color:var(--sub)}
+  /* 固定費・サブスク */
+  .fxlist .fxitem{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+  .fxlist .fxitem:last-child{border-bottom:0}
+  .fxlist .fxitem.off{opacity:.5}
+  .fxlist .fxmid{flex:1;min-width:0}
+  .fxlist .fxmid .fxname{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .fxlist .fxmid .fxsub{font-size:11px;color:var(--sub)}
+  .fxlist .fxamt{flex:0 0 auto;font-variant-numeric:tabular-nums;font-weight:700}
+  .fxlist .fxamt.var{color:var(--sub);font-weight:600;font-size:12px}
+  .fxlist .fxtgl{flex:0 0 auto;width:auto;padding:5px 10px;font-size:11px;background:transparent;border:1px solid var(--line)}
+  .fxlist .fxtgl.on{color:var(--ok);border-color:var(--ok)} .fxlist .fxtgl.offc{color:var(--sub)}
+  .fxlist .fxedit{flex:0 0 auto;width:auto;padding:5px 9px;font-size:11px;background:transparent;border:1px solid var(--line);color:var(--accent)}
+  .fxlist .fxdel{flex:0 0 auto;width:auto;padding:5px 9px;font-size:11px;background:transparent;color:var(--warn);border:1px solid var(--line)}
+  .fxform{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}
+  .fxform.editing{border:1px solid var(--accent);border-radius:10px;padding:10px;margin-top:10px}
+  /* 金額待ちリマインド（控えめ・中立） */
+  .remind{margin-bottom:12px}
+  .remind .r{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--accent2);border-radius:10px;padding:11px 13px;font-size:13px;line-height:1.6;cursor:pointer}
+  .remind .r:active{transform:scale(.995)}
+  .remind .r .rname{font-weight:600}
+  .remind .r .rsub{font-size:11px;color:var(--sub);margin-top:2px}
+  /* ===== 家計管理v0：ヒーロー（今日 安心して使える） ===== */
+  .hero{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 16px 16px;margin-bottom:12px;text-align:center}
+  .hero .h-k{font-size:13px;color:var(--sub);line-height:1.5}
+  .hero .h-v{font-size:48px;font-weight:700;color:var(--accent2);font-variant-numeric:tabular-nums;letter-spacing:-.01em;margin:4px 0 2px;line-height:1.05}
+  .hero .h-v.calm{color:#3a4a4e;font-size:30px}
+  .hero .h-sub{font-size:12px;color:var(--sub);margin-top:4px}
+  .hero .h-note{font-size:13px;color:#3a4a4e;margin-top:8px;line-height:1.55}
+  @media (max-width:380px){ .hero .h-v{font-size:40px} }
+  /* ===== この先 出ていくお金（カード引き落とし予定） ===== */
+  .bills{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+  .bills .b-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:2px}
+  .bills .b-head .b-t{font-size:14px;font-weight:700}
+  .bills .b-head .b-sum{font-size:16px;font-weight:700;color:#3a4a4e;font-variant-numeric:tabular-nums}
+  .bills .b-sub{font-size:11px;color:var(--sub);margin-bottom:8px}
+  .bills .b-list .b-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+  .bills .b-list .b-row:last-child{border-bottom:0}
+  .bills .b-list .b-row.soon{border-left:3px solid var(--accent2);padding-left:8px;margin-left:-8px}
+  .bills .b-row .b-date{flex:0 0 auto;font-weight:700;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .bills .b-row .b-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .bills .b-row .b-amt{flex:0 0 auto;font-variant-numeric:tabular-nums;font-weight:700;color:var(--ink)}
+  .bills .b-row .b-del{flex:0 0 auto;width:auto;padding:5px 9px;font-size:11px;background:transparent;color:var(--sub);border:1px solid var(--line)}
+  /* 橋一言（禁煙の節約・前向きレイヤー） */
+  .bridge{background:#eaf1f0;border:1px solid var(--ok);border-radius:12px;padding:11px 13px;margin-bottom:12px;font-size:13px;line-height:1.55;color:#2b4a45}
+  @media (prefers-color-scheme: dark){ .bridge{background:#22302d;color:#cfe5e0} }
+  /* 支払い方法チップ列（既存.chips/.chip流用・既定の現金は薄く） */
+  .paychips .chip.dim{opacity:.7}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
@@ -84,7 +154,7 @@
 <body>
   <div class="err" id="err"></div>
   <a href="https://tsuyoshi0417.github.io/" style="display:inline-block;font-size:13px;color:var(--accent);text-decoration:none;margin-bottom:6px">← ホーム</a>
-  <h1>言ノ葉 個人 <span style="color:var(--sub);font-size:12px">v0</span></h1>
+  <h1>言ノ葉 個人 <span style="color:var(--sub);font-size:12px">v1</span></h1>
   <div class="tag">つよしさん専用｜本人ログインの裏＝あなただけ</div>
 
   <div class="modebar" id="modebar">
@@ -100,6 +170,18 @@
       <div class="card"><div class="k">禁煙に向けて</div><div class="v" id="cDays">―</div></div>
       <div class="card"><div class="k">節約額（貯まった）</div><div class="v small" id="cSave">―</div></div>
       <div class="card"><div class="k">今日 吸った</div><div class="v muted" id="cToday">―</div></div>
+    </div>
+    <div class="panel" id="sGoalPanel">
+      <div class="goalbar">
+        <div class="gb-top"><span class="gb-l">未来の原資</span><span class="gb-v" id="gbVal">―</span></div>
+        <div class="gb-track"><div class="gb-fill gold" id="gbFill" style="width:0%"></div></div>
+        <div class="gb-sub" id="gbSub">―</div>
+      </div>
+      <div class="goalbar" style="margin-top:12px">
+        <div class="gb-top"><span class="gb-l">禁煙の経過</span><span class="gb-v" id="spVal">―</span></div>
+        <div class="gb-track"><div class="gb-fill teal" id="spFill" style="width:0%"></div></div>
+        <div class="gb-sub" id="spSub">―</div>
+      </div>
     </div>
     <div class="panel">
       <label>引き金（先に選ぶ）</label>
@@ -120,17 +202,54 @@
       <div class="list" id="todayList"><div class="empty">今日はまだ無し</div></div>
     </div>
     <details class="cfg"><summary>⚙ 設定（禁煙の前提）</summary>
-      <div class="cfgbody"><div class="note">禁煙前は1日 <b id="cfgBase">15</b> 本／1本 <b id="cfgPrice">31</b> 円／開始 <b id="cfgStart">2026-06-17</b>／目標 <b id="cfgTarget">2026-08-15</b>。<br>節約額＝(15本×経過日数 − 実際に吸った累計)×31円。</div></div>
+      <div class="cfgbody">
+        <label>未来の原資ゴール（節約額の到達目標）</label>
+        <div class="goalchips" id="goalChips"></div>
+        <input id="goalInput" type="number" inputmode="numeric" placeholder="自由に金額を入れる（円）">
+        <div class="note">節約が貯まる先の目標額。<b>具体的な使い道はあなたの胸の内でOK</b>。チップか自由入力で設定すると、上の原資バーに反映される。</div>
+        <div class="note" style="margin-top:10px">禁煙前は1日 <b id="cfgBase">15</b> 本／1本 <b id="cfgPrice">31</b> 円／開始 <b id="cfgStart">2026-06-17</b>／目標 <b id="cfgTarget">2026-08-15</b>。<br>節約額＝(15本×経過日数 − 実際に吸った累計)×31円。</div>
+      </div>
     </details>
   </div>
 
   <!-- 財布 -->
   <div class="mode" id="modeWallet">
+
+    <!-- ヒーロー：今日 安心して使える -->
+    <div class="hero" id="wHero">
+      <div class="h-k">今日 これだけは安心して使える</div>
+      <div class="h-v" id="wDispoToday">¥―</div>
+      <div class="h-sub" id="wDispoSub">―</div>
+      <div class="h-note" id="wDispoNote" style="display:none"></div>
+    </div>
+
+    <!-- この先 出ていくお金（カード引き落とし予定） -->
+    <div class="bills" id="wBills" style="display:none">
+      <div class="b-head"><span class="b-t">この先 出ていくお金</span><span class="b-sum" id="wBillsSum">¥0</span></div>
+      <div class="b-sub">計画に入れてあるから大丈夫</div>
+      <div class="b-list" id="wBillsList"></div>
+    </div>
+
+    <!-- カード返済の山 -->
+    <div class="panel" id="wMountainPanel" style="display:none">
+      <div class="goalbar">
+        <div class="gb-top"><span class="gb-l">カード返済の山</span><span class="gb-v" id="wMtnVal">―</span></div>
+        <div class="gb-track"><div class="gb-fill teal" id="wMtnFill" style="width:0%"></div></div>
+        <div class="gb-sub">この山を越えると、貯金が始められる</div>
+      </div>
+    </div>
+
+    <!-- 橋一言（禁煙の節約） -->
+    <div class="bridge" id="wBridge" style="display:none"></div>
+
     <div class="cards">
       <div class="card"><div class="k" id="wInLabel">今月 収入</div><div class="v small" id="wIncome">¥0</div></div>
       <div class="card"><div class="k" id="wOutLabel">今月 支出</div><div class="v small" id="wExpense">¥0</div></div>
     </div>
-    <div class="card" style="margin-bottom:12px"><div class="k">今月 残り（収入−支出）</div><div class="v" id="wBalance">¥0</div></div>
+    <div class="card" style="margin-bottom:12px"><div class="k">今月 残り（収入−支出）</div><div class="v" id="wBalance">¥0</div><div class="k" id="wDeadline" style="margin-top:4px"></div></div>
+
+    <div class="advice" id="wAdvice" style="display:none"></div>
+    <div class="remind" id="wRemind" style="display:none"></div>
 
     <div class="panel">
       <div class="seg">
@@ -143,6 +262,8 @@
       </div>
       <label style="margin-top:10px">カテゴリ</label>
       <div class="chips" id="wCatChips"></div>
+      <label style="margin-top:10px" id="wPayLabel">支払い方法</label>
+      <div class="chips paychips" id="wPayChips"></div>
       <label style="margin-top:10px">項目・店</label>
       <input id="wItem" placeholder="例：SUNNY 高取店 / 翠ジンソーダ">
       <label style="margin-top:8px">メモ（任意）</label>
@@ -164,6 +285,67 @@
       </div>
       <div class="list" id="wList"><div class="empty">まだ無し</div></div>
     </div>
+
+    <details class="cfg"><summary>⚙ 収入と固定の出費（前提）</summary>
+      <div class="cfgbody">
+        <div class="row">
+          <div><label>想定の月収（手取り・円）</label><input id="bgIncome" type="number" inputmode="numeric" placeholder="例 200000"></div>
+          <div><label>入る日（1〜31）</label><input id="bgIncomeDay" type="number" inputmode="numeric" min="1" max="31" placeholder="25"></div>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <div><label>家賃 自分の負担（円）</label><input id="bgRent" type="number" inputmode="numeric" placeholder="例 50000"></div>
+          <div><label>家賃の引き落とし日</label><input id="bgRentDay" type="number" inputmode="numeric" min="1" max="31" placeholder="27"></div>
+        </div>
+        <div class="acts2"><button type="button" class="save" id="bgSaveBtn">この前提を保存</button></div>
+        <div class="note" style="margin-top:8px">ここは<b>めったに変わらない</b>。一度入れたら基本さわらない。家賃は固定費として毎月自動で計上される。</div>
+      </div>
+    </details>
+
+    <details class="cfg"><summary>⚙ カード引き落とし予定（この先 出ていくお金）</summary>
+      <div class="cfgbody">
+        <div class="b-list" id="cbList" style="margin-bottom:4px"></div>
+        <div class="fxform" id="cbForm">
+          <div id="cbEditingTag" class="note" style="display:none;color:var(--accent);font-weight:700;margin-bottom:6px"></div>
+          <label>カード名</label>
+          <input id="cbName" placeholder="例：JALカード / 楽天カード">
+          <div class="row" style="margin-top:8px">
+            <div><label>引き落とし日</label><input id="cbDue" type="date"></div>
+            <div><label>金額（円）</label><input id="cbAmount" type="number" inputmode="numeric" placeholder="例 30000"></div>
+          </div>
+          <label style="margin-top:8px">メモ（任意）</label>
+          <input id="cbNote" placeholder="任意">
+          <div class="acts2">
+            <button type="button" class="save" id="cbSaveBtn">追加する</button>
+            <button type="button" id="cbCancelBtn" style="display:none;flex:.6">やめる</button>
+          </div>
+          <div class="note" style="margin-top:8px">カードの請求が分かったら入れておく。<b>引き落とし日が来ると上の「今日 使える」から先に取り分けて計算</b>される（後から驚かないため）。</div>
+        </div>
+      </div>
+    </details>
+
+    <details class="cfg"><summary>⚙ 固定費・サブスク</summary>
+      <div class="cfgbody">
+        <div class="fxlist" id="fxList"><div class="empty">まだ無し</div></div>
+        <div class="fxform" id="fxForm">
+          <div id="fxEditingTag" class="note" style="display:none;color:var(--accent);font-weight:700;margin-bottom:6px"></div>
+          <label>名前</label>
+          <input id="fxName" placeholder="例：Spotify / 楽天カード 通信費">
+          <div class="row" style="margin-top:8px">
+            <div><label>金額（円・空＝変動）</label><input id="fxAmount" type="number" inputmode="numeric" placeholder="変動はそのまま空に"></div>
+            <div><label>決済日（1〜31）</label><input id="fxPayDay" type="number" inputmode="numeric" min="1" max="31" placeholder="例 25"></div>
+          </div>
+          <label style="margin-top:10px">費目</label>
+          <div class="chips" id="fxCatChips"></div>
+          <label style="margin-top:10px">支払い方法（任意）</label>
+          <input id="fxMethod" placeholder="例：DCカード / 楽天カード">
+          <div class="acts2">
+            <button type="button" class="save" id="fxSaveBtn">追加する</button>
+            <button type="button" id="fxCancelBtn" style="display:none;flex:.6">やめる</button>
+          </div>
+          <div class="note" style="margin-top:8px">固定額は<b>毎月の決済日に自動で計上</b>。金額が変わる物（Wi-Fi・利用量制）は<b>空</b>にすると「金額が出たら入れてね」と知らせるだけ（勝手に数字を作らない）。</div>
+        </div>
+      </div>
+    </details>
   </div>
 
   <!-- クラウド同期 -->
@@ -191,9 +373,33 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
   function cycleKey(dateStr){var p=String(dateStr||"").split("-");if(p.length<3)return String(dateStr||"").slice(0,7);var y=+p[0],m=+p[1],d=+p[2];if(d<25){m-=1;if(m<1){m=12;y-=1;}}return y+"-"+("0"+m).slice(-2);}
   function cycleLabel(key){var p=String(key).split("-"),m=+p[1];return m+"月度";}
   function recId(x){return (x&&x.id)?String(x.id):JSON.stringify(x);}
+  /* 月度キーの1つ後（次月度） */
+  function nextCycle(key){var p=String(key).split("-"),y=+p[0],m=+p[1];m+=1;if(m>12){m=1;y+=1;}return y+"-"+("0"+m).slice(-2);}
+  /* 月度キー＋payDay(1〜31) → そのサイクル内の実日付 YYYY-MM-DD。
+     25日起算なので payDay>=25 はキー月、payDay<25 は翌月。月末超過は実在日に丸める。 */
+  function cycleDate(key,payDay){
+    var p=String(key).split("-"),y=+p[0],m=+p[1],pd=+payDay;
+    if(pd<25){m+=1;if(m>12){m=1;y+=1;}}
+    var last=new Date(y,m,0).getDate();if(pd>last)pd=last;
+    return y+"-"+("0"+m).slice(-2)+"-"+("0"+pd).slice(-2);
+  }
 
-  /* ====== 禁煙 ====== */
+  /* ====== 設定（閾値・ゴールを1か所に集約） ====== */
   var CFG={baseline:15,price:31,start:"2026-06-17",target:"2026-08-15"};
+  /* 未来の原資ゴール（節約額の到達目標） */
+  var GOAL_PRESETS=[10000,30000,50000,100000];
+  var GOAL_KEY="cotonoha_me_goal", GOAL_DEFAULT=30000;
+  function getGoal(){try{var v=parseInt(localStorage.getItem(GOAL_KEY),10);return (v&&v>0)?v:GOAL_DEFAULT;}catch(e){return GOAL_DEFAULT;}}
+  function setGoal(v){try{localStorage.setItem(GOAL_KEY,String(v));}catch(e){}}
+  /* アドバイス閾値（経費.html の WADV_TH に倣う・1か所） */
+  var WADV_TH={ jumpRatio:1.4, jumpMin:3000, saveStep:5000, maxCards:2, sparseN:3 };
+  /* 禁煙データから節約額を出す共通ヘルパ（財布・禁煙双方から使う・外部送信なし） */
+  function getSaved(){
+    var list=getSmoke(),smokedAll=0;
+    for(var i=0;i<list.length;i++)if(list[i].type==="吸った")smokedAll++;
+    var days=daysSince(CFG.start);
+    return Math.max(0,(CFG.baseline*days-smokedAll))*CFG.price;
+  }
   var TRIGGERS=["イライラ","AIにイライラ","仕事前","食後","手持ち無沙汰","付き合い","その他"];
   var selTrig="",toastTimer=null;
   function showToast(msg){var el=$("toast");if(!el)return;el.textContent=msg;el.style.display="block";if(toastTimer)clearTimeout(toastTimer);toastTimer=setTimeout(function(){el.style.display="none";},4000);}
@@ -231,8 +437,9 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
       var key=x.trigger||"その他";if(!tc[key])tc[key]={smoke:0,resist:0};
       if(x.type==="吸った")tc[key].smoke++;else tc[key].resist++;
     }
-    var days=daysSince(CFG.start),saved=Math.max(0,(CFG.baseline*days-smokedAll))*CFG.price;
+    var days=daysSince(CFG.start),saved=getSaved();
     $("cDays").textContent=days+"日目";$("cToday").textContent=todaySmoke+"本";$("cSave").textContent=yen(saved);$("cResist").textContent=todayResist+"回";
+    renderGoalBar(saved);renderSmokeProgress();
     var keys=[];for(var k in tc)if(tc.hasOwnProperty(k))keys.push(k);
     keys.sort(function(a,b){return tc[b].smoke-tc[a].smoke;});
     var rb=$("rank"),rh="";
@@ -247,19 +454,75 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
     var dels=lb.querySelectorAll(".del");for(var d2=0;d2<dels.length;d2++){(function(b){b.addEventListener("click",function(){delSmoke(b.getAttribute("data-id"));});})(dels[d2]);}
     $("cfgBase").textContent=CFG.baseline;$("cfgPrice").textContent=CFG.price;$("cfgStart").textContent=CFG.start;$("cfgTarget").textContent=CFG.target;
   }
+  /* 未来の原資バー（節約額→ゴール額・金色・無記名ゴール） */
+  function renderGoalBar(saved){
+    var goal=getGoal(),pct=goal>0?Math.round(saved/goal*100):0;if(pct>100)pct=100;
+    var fill=$("gbFill");if(fill)fill.style.width=pct+"%";
+    var v=$("gbVal");if(v)v.textContent=yen(saved)+" / "+yen(goal);
+    var sub=$("gbSub");
+    if(sub){
+      if(saved>=goal)sub.textContent="100%・ゴール到達。次の原資へ。";
+      else sub.textContent=pct+"%・あと "+yen(goal-saved);
+    }
+  }
+  /* 禁煙の経過バー（start→target・ティール） */
+  function renderSmokeProgress(){
+    var s=new Date(CFG.start+"T00:00:00"),t=new Date(CFG.target+"T00:00:00"),n=new Date(todayStr()+"T00:00:00");
+    var total=Math.max(1,Math.round((t-s)/86400000)),done=Math.round((n-s)/86400000);
+    if(done<0)done=0;var pct=Math.round(done/total*100);if(pct>100)pct=100;if(pct<0)pct=0;
+    var fill=$("spFill");if(fill)fill.style.width=pct+"%";
+    var dnum=daysSince(CFG.start),remain=Math.max(0,total-done);
+    var v=$("spVal");if(v)v.textContent=pct+"%";
+    var sub=$("spSub");if(sub)sub.textContent=(done>=total)?(dnum+"日目・目標日に到達"):(dnum+"日目／目標まであと"+remain+"日");
+  }
+  /* 設定内：ゴール額チップ＋自由入力 */
+  function buildGoalChips(){
+    var box=$("goalChips");if(!box)return;var cur=getGoal(),html="";
+    for(var i=0;i<GOAL_PRESETS.length;i++){var v=GOAL_PRESETS[i],sel=(v===cur)?" sel":"";
+      html+='<span class="chip goalc'+sel+'" data-v="'+v+'">'+yen(v)+'</span>';}
+    box.innerHTML=html;
+    var chips=box.querySelectorAll(".goalc");
+    for(var j=0;j<chips.length;j++){(function(c){c.addEventListener("click",function(){
+      var v=parseInt(c.getAttribute("data-v"),10);setGoal(v);
+      var gi=$("goalInput");if(gi)gi.value="";
+      buildGoalChips();refreshSmoke();
+    });})(chips[j]);}
+    var gi=$("goalInput");
+    if(gi&&GOAL_PRESETS.indexOf(cur)<0)gi.value=cur;
+  }
   function delSmoke(id){if(!confirm("この記録を取り消す？"))return;var l=getSmoke(),o=[];for(var i=0;i<l.length;i++)if(String(recId(l[i]))!==String(id))o.push(l[i]);setSmoke(o);Cloud.deleteOne("smoking",id);refreshSmoke();}
 
   /* ====== 財布 ====== */
   var WEXP=["食費","外食","お酒","タバコ","お菓子","日用品","交通","医療","通信","趣味・娯楽","衣類","交際","その他"];
   var WINC=["給料","副収入","その他"];
-  var wType="支出",wCat="";
+  var wType="支出",wCat="",wPay="現金";
+  var WPAY=["現金","JALカード","楽天カード","その他"];
   function getWallet(){try{return JSON.parse(localStorage.getItem("cotonoha_wallet")||"[]");}catch(e){return [];}}
   function setWallet(l){try{localStorage.setItem("cotonoha_wallet",JSON.stringify(l||[]));}catch(e){}}
+
+  /* ===== 前提（収入と家賃）：localStorage cotonoha_me_budget・Cloud.TREES budget ===== */
+  var BUDGET_DEFAULT={income:0,incomeDay:25,rentDay:27,rent:0};
+  function getBudget(){try{var b=JSON.parse(localStorage.getItem("cotonoha_me_budget")||"null");if(!b||typeof b!=="object")return {income:BUDGET_DEFAULT.income,incomeDay:BUDGET_DEFAULT.incomeDay,rentDay:BUDGET_DEFAULT.rentDay};return {income:(b.income!=null?+b.income:BUDGET_DEFAULT.income),incomeDay:(b.incomeDay!=null?+b.incomeDay:BUDGET_DEFAULT.incomeDay),rentDay:(b.rentDay!=null?+b.rentDay:BUDGET_DEFAULT.rentDay)};}catch(e){return {income:BUDGET_DEFAULT.income,incomeDay:BUDGET_DEFAULT.incomeDay,rentDay:BUDGET_DEFAULT.rentDay};}}
+  function setBudget(b){try{localStorage.setItem("cotonoha_me_budget",JSON.stringify(b||{}));}catch(e){}}
+  function seedBudget(){try{if(localStorage.getItem("cotonoha_me_budget")==null){setBudget({income:BUDGET_DEFAULT.income,incomeDay:BUDGET_DEFAULT.incomeDay,rentDay:BUDGET_DEFAULT.rentDay});}}catch(e){}}
+
+  /* ===== カード引き落とし予定：localStorage cotonoha_cardbill・Cloud.TREES cardbill ===== */
+  function getCardBills(){try{return JSON.parse(localStorage.getItem("cotonoha_cardbill")||"[]");}catch(e){return [];}}
+  function setCardBills(l){try{localStorage.setItem("cotonoha_cardbill",JSON.stringify(l||[]));}catch(e){}}
+  function seedCardBills(){
+    if(getCardBills().length)return;
+    var seed=[]; /* 公開ソースには実額を置かない＝本人がアプリで追加（非公開クラウドに同期） */
+    setCardBills(seed);Cloud.pushAllTree("cardbill",seed);
+  }
   function setWType(t){
     wType=t;wCat="";
     $("wTypeOut").className=(t==="支出")?"cur-out":"";
     $("wTypeIn").className=(t==="収入")?"cur-in":"";
     buildWCats();
+    /* 支払い方法は支出のときだけ（収入には不要） */
+    var show=(t==="支出"),pl=$("wPayLabel"),pc=$("wPayChips");
+    if(pl)pl.style.display=show?"":"none";if(pc)pc.style.display=show?"":"none";
+    if(show){wPay="現金";renderWPaySel();}
   }
   function buildWCats(){
     var box=$("wCatChips"),cats=(wType==="支出")?WEXP:WINC,html="";
@@ -270,13 +533,36 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
       wCat=c.getAttribute("data-v");var all=box.querySelectorAll(".wcat");for(var k=0;k<all.length;k++){if(all[k].getAttribute("data-v")===wCat)all[k].classList.add("sel");else all[k].classList.remove("sel");}
     });})(chips[j]);}
   }
+  /* 費目を外部から選択状態にする（リマインドのプリフィル用） */
+  function setWCat(v){wCat=v||"";var box=$("wCatChips");if(!box)return;var all=box.querySelectorAll(".wcat");for(var k=0;k<all.length;k++){if(all[k].getAttribute("data-v")===wCat&&wCat)all[k].classList.add("sel");else all[k].classList.remove("sel");}}
+  /* 支払い方法チップ（既定=現金を薄く選択・未選択でも保存可） */
+  function buildWPay(){
+    var box=$("wPayChips");if(!box)return;var html="";
+    for(var i=0;i<WPAY.length;i++)html+='<span class="chip wpay" data-v="'+WPAY[i].replace(/"/g,"&quot;")+'">'+WPAY[i].replace(/</g,"&lt;")+'</span>';
+    box.innerHTML=html;
+    var chips=box.querySelectorAll(".wpay");
+    for(var j=0;j<chips.length;j++){(function(c){c.addEventListener("click",function(){
+      wPay=(wPay===c.getAttribute("data-v"))?"":c.getAttribute("data-v");renderWPaySel();
+    });})(chips[j]);}
+    renderWPaySel();
+  }
+  function renderWPaySel(){
+    var box=$("wPayChips");if(!box)return;var all=box.querySelectorAll(".wpay");
+    for(var k=0;k<all.length;k++){var v=all[k].getAttribute("data-v"),on=(v===wPay&&wPay);
+      all[k].classList.toggle("sel",!!on);
+      all[k].classList.toggle("dim",!!(on&&v==="現金")); /* 既定の現金は薄く */
+    }
+  }
+  function setWPay(v){wPay=v||"";renderWPaySel();}
   function saveWallet(){
     var amt=parseFloat($("wAmount").value);
     if(isNaN(amt)||amt<=0){alert("金額を入れてね");return;}
     if(!wCat){alert("カテゴリを選んでね");return;}
     var rec={id:"wl|app|"+uid4(),date:$("wDate").value||todayStr(),type:wType,amount:Math.round(amt),category:wCat,item:($("wItem").value||"").trim(),memo:($("wMemo").value||"").trim()};
+    if(wType==="支出"&&wPay)rec.method=wPay;
     var l=getWallet();l.unshift(rec);setWallet(l);Cloud.pushOne("wallet",rec);
     $("wAmount").value="";$("wItem").value="";$("wMemo").value="";
+    if(wType==="支出"){wPay="現金";renderWPaySel();}
     refreshWallet();
   }
   function buildWMonths(){
@@ -286,18 +572,49 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
     var cur=sel.value,h="";for(var j=0;j<ms.length;j++)h+='<option value="'+ms[j]+'">'+ms[j].slice(0,4)+"年 "+cycleLabel(ms[j])+"（25日〜）"+'</option>';
     sel.innerHTML=h;sel.value=(cur&&ms.indexOf(cur)>=0)?cur:ms[0];
   }
+  /* 月度キーの1つ前（前月度） */
+  function prevCycle(key){var p=String(key).split("-"),y=+p[0],m=+p[1];m-=1;if(m<1){m=12;y-=1;}return y+"-"+("0"+m).slice(-2);}
+  /* 締め（毎月25日起算）まであと何日。当月度=今日が属する期の次の25日まで */
+  function daysToDeadline(){
+    var d=new Date(todayStr()+"T00:00:00"),y=d.getFullYear(),m=d.getMonth(),day=d.getDate();
+    var nm=m,ny=y;if(day>=25){nm=m+1;if(nm>11){nm=0;ny=y+1;}}
+    var due=new Date(ny,nm,25,0,0,0);
+    return Math.max(0,Math.round((due-d)/86400000));
+  }
+  /* 指定月度・指定カテゴリ（支出）の合計 */
+  function catSum(list,cyc,cat){var s=0;for(var i=0;i<list.length;i++){var x=list[i];if(x.type==="収入")continue;if(cycleKey(x.date)!==cyc)continue;if((x.category||"その他")===cat)s+=Number(x.amount)||0;}return s;}
+  /* 指定月度に給料収入の記録があるか */
+  function hasSalary(list,cyc){for(var i=0;i<list.length;i++){var x=list[i];if(x.type==="収入"&&x.category==="給料"&&cycleKey(x.date)===cyc)return true;}return false;}
+
   function refreshWallet(){
+    runFixedCosts();
     var l=getWallet(),tm=cycleKey(todayStr()),inc=0,exp=0;
     for(var i=0;i<l.length;i++){var x=l[i];if(cycleKey(x.date)!==tm)continue;if(x.type==="収入")inc+=Number(x.amount)||0;else exp+=Number(x.amount)||0;}
-    $("wIncome").textContent=yen(inc);$("wExpense").textContent=yen(exp);$("wBalance").textContent=yen(inc-exp);
+    var bal=inc-exp, salary=hasSalary(l,tm);
+    $("wIncome").textContent=yen(inc);$("wExpense").textContent=yen(exp);
+    var wb=$("wBalance");wb.textContent=yen(bal);
+    /* マイナス残高の色：給料未記録なら中立（赤字と誤らせない）／給料ありの赤字だけwarn */
+    wb.className="v"+(bal<0?(salary?" warn":" neutral"):"");
     $("wInLabel").textContent=cycleLabel(tm)+" 収入";$("wOutLabel").textContent=cycleLabel(tm)+" 支出";
+    var dl=$("wDeadline"),dd=daysToDeadline();if(dl)dl.textContent="締めまで あと"+dd+"日";
     buildWMonths();
+    renderHero(l,tm,exp,dd);
+    renderCardBills();
+    renderMountain(l,tm);
+    renderBridge();
+    renderWalletAdvice(l,tm,bal,salary,dd);
+    renderFixedReminders();
     var m=$("wMonthSel").value||tm,by={},te=0,ti=0;
     for(var j=0;j<l.length;j++){var y=l[j];if(cycleKey(y.date)!==m)continue;if(y.type==="収入"){ti+=Number(y.amount)||0;continue;}var c=y.category||"その他";by[c]=(by[c]||0)+(Number(y.amount)||0);te+=Number(y.amount)||0;}
     var keys=[];for(var k in by)if(by.hasOwnProperty(k))keys.push(k);keys.sort(function(a,b){return by[b]-by[a];});
-    var bb=$("wBreakdown"),bh="";
+    var bb=$("wBreakdown"),bh="",pm=prevCycle(m),NOTE_CATS={"タバコ":1,"お酒":1,"外食":1};
     if(!keys.length&&!ti)bh='<div class="empty">この月の記録はまだ無し</div>';
-    else{for(var r=0;r<keys.length;r++)bh+='<div class="bd"><span>'+keys[r].replace(/</g,"&lt;")+'</span><b>'+yen(by[keys[r]])+'</b></div>';
+    else{for(var r=0;r<keys.length;r++){var ck=keys[r],note="";
+        if(NOTE_CATS[ck]){var prev=catSum(l,pm,ck),cur=by[ck];
+          if(prev>0&&cur<prev)note=' <span style="font-size:11px;color:var(--ok)">先月度 '+yen(prev)+' ↓</span>';
+          else if(cur>prev)note=' <span style="font-size:11px;color:var(--warn)">先月度 '+yen(prev)+' ↑</span>';
+        }
+        bh+='<div class="bd"><span>'+ck.replace(/</g,"&lt;")+note+'</span><b>'+yen(by[ck])+'</b></div>';}
       bh+='<div class="bd total"><span>支出合計</span><b>'+yen(te)+'</b></div>';
       if(ti)bh+='<div class="bd total"><span>収入合計</span><b>'+yen(ti)+'</b></div>';}
     bb.innerHTML=bh;
@@ -305,10 +622,62 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
     if(!l.length)lh='<div class="empty">まだ無し</div>';
     else for(var n=0;n<Math.min(100,l.length);n++){var z=l[n],cls=z.type==="収入"?"in":"out",rid=String(recId(z)).replace(/"/g,"&quot;");
       var pay=(z.item||z.category||"")+(z.memo?" ・"+z.memo:"");
-      lh+='<div class="item"><span class="tg '+cls+'">'+(z.category||"").replace(/</g,"&lt;")+'</span><div class="mid"><div class="pay">'+String(pay).replace(/</g,"&lt;")+'</div><div class="tm">'+(z.date||"")+'</div></div><span class="amt">'+(z.type==="収入"?"+":"")+yen(z.amount)+'</span><button type="button" class="del" data-id="'+rid+'">削除</button></div>';}
+      /* カード払いだけ method を小さく併記（現金・空は出さない） */
+      var mh=(z.method&&z.method!=="現金")?('<span class="tm"> '+String(z.method).replace(/</g,"&lt;")+'</span>'):"";
+      lh+='<div class="item"><span class="tg '+cls+'">'+(z.category||"").replace(/</g,"&lt;")+'</span><div class="mid"><div class="pay">'+String(pay).replace(/</g,"&lt;")+'</div><div class="tm">'+(z.date||"")+mh+'</div></div><span class="amt">'+(z.type==="収入"?"+":"")+yen(z.amount)+'</span><button type="button" class="del" data-id="'+rid+'">削除</button></div>';}
     lb.innerHTML=lh;
     var dels=lb.querySelectorAll(".del");for(var d3=0;d3<dels.length;d3++){(function(b){b.addEventListener("click",function(){delWallet(b.getAttribute("data-id"));});})(dels[d3]);}
   }
+  /* ====== アドバイス（最大2件・優先度順・3色・0件なら非表示・外部送信なし） ====== */
+  function renderWalletAdvice(list,tm,bal,salary,dd){
+    var box=$("wAdvice");if(!box)return;
+    var c=[]; /* {p:優先度(小=高), tone:"good|neutral|warn", t:文言} */
+    var pm=prevCycle(tm);
+
+    /* WR_dep｜給料未記録のマイナス（中立・高） */
+    if(bal<0 && !salary){
+      c.push({p:1,tone:"neutral",t:"収入がまだ未記録。給料を入れると残りが変わる。"});
+    }
+    /* WR_def｜本当の赤字（注意・高） */
+    if(bal<0 && salary){
+      c.push({p:1,tone:"warn",t:"今月度、支出が収入を上回ってる（"+yen(bal)+"）。締めまであと"+dd+"日。"});
+    }
+    /* WR_save｜節約の節目（良い・中）：savedが新しい¥5,000刻みの節目を超えた */
+    var saved=getSaved(),step=WADV_TH.saveStep;
+    if(saved>=step){
+      var node=Math.floor(saved/step)*step;
+      c.push({p:2,tone:"good",t:"禁煙の節約が <b>"+yen(saved)+"</b> に。未来の原資に積み上がってる（直近の節目 "+yen(node)+"）。"});
+    }
+    /* WR_tabako｜タバコが前月度より減（良い・中） */
+    var tCur=catSum(list,tm,"タバコ"),tPrev=catSum(list,pm,"タバコ");
+    if(tPrev>0 && tCur<tPrev){
+      c.push({p:2,tone:"good",t:"タバコ <b>"+yen(tPrev)+"→"+yen(tCur)+"</b>。ここに使わず済んでる。"});
+    }
+    /* WR_jump｜変動費が前月度比で大きく増（中立・低）：最大1費目 */
+    var jumpCat=null,jumpRatio=0,jc=["外食","お酒","趣味・娯楽","交際","お菓子"];
+    for(var i=0;i<jc.length;i++){var cur=catSum(list,tm,jc[i]),prev=catSum(list,pm,jc[i]);
+      if(prev>0 && cur>=WADV_TH.jumpMin){var ratio=cur/prev;
+        if(ratio>=WADV_TH.jumpRatio && ratio>jumpRatio){jumpRatio=ratio;jumpCat=jc[i];}}}
+    if(jumpCat){
+      c.push({p:3,tone:"neutral",t:jumpCat+"が前月度比 <b>"+(Math.round(jumpRatio*10)/10)+"倍</b>。意図したものなら問題なし。"});
+    }
+    /* WR_first｜データ薄い（中立・最低・他が出たら隠す） */
+    if(list.length<WADV_TH.sparseN){
+      c.push({p:9,tone:"neutral",t:"数件入れると、費目の偏りや締めまでのペースをお伝えします。",first:true});
+    }
+
+    c.sort(function(a,b){return a.p-b.p;});
+    /* WR_first は他が出たら隠す */
+    var hasOther=false;for(var k=0;k<c.length;k++)if(!c[k].first){hasOther=true;break;}
+    if(hasOther)c=c.filter(function(x){return !x.first;});
+
+    c=c.slice(0,WADV_TH.maxCards);
+    if(!c.length){box.style.display="none";box.innerHTML="";return;}
+    var h="";for(var j=0;j<c.length;j++)h+='<div class="a '+c[j].tone+'">'+c[j].t+'</div>';
+    h+='<div class="a-foot">※気づきです（確定診断ではありません）</div>';
+    box.innerHTML=h;box.style.display="block";
+  }
+
   function delWallet(id){if(!confirm("この収支を削除する？"))return;var l=getWallet(),o=[];for(var i=0;i<l.length;i++)if(String(recId(l[i]))!==String(id))o.push(l[i]);setWallet(o);Cloud.deleteOne("wallet",id);refreshWallet();}
   function exportWCSV(){
     var l=getWallet();function c(v){return String(nn(v)).replace(/[\n,]/g," ");}
@@ -317,6 +686,373 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
     var blob=new Blob(["﻿"+lines.join("\n")],{type:"text/csv"});
     var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="個人収支_"+todayStr()+".csv";
     document.body.appendChild(a);a.click();document.body.removeChild(a);
+  }
+
+  /* ====== 前提フォーム（収入・家賃）＋家賃の固定費seed ====== */
+  /* 家賃は「固定費・サブスク」に slug:"rent" で1本だけ持たせ、自動計上に乗せる（二重定義を避ける）。 */
+  function seedRent(){
+    var fx=getFixed();
+    for(var i=0;i<fx.length;i++)if(fx[i].slug==="rent")return; /* 既にあれば足さない＝重複なし */
+    var b=getBudget();
+    var rentAmt=(b.rent!=null?+b.rent:BUDGET_DEFAULT.rent);
+    if(!(rentAmt>0))return; /* 家賃未設定（公開デフォルト¥0）なら自動計上しない */
+    fx.push({id:uid4(),slug:"rent",name:"家賃（自分の負担）",amount:rentAmt,category:"その他",payDay:(b.rentDay||BUDGET_DEFAULT.rentDay),method:"",active:true,startYM:"",lastGen:"",note:"前提から自動"});
+    setFixed(fx);Cloud.pushAllTree("fixed",fx);
+  }
+  function buildBudgetForm(){
+    var b=getBudget();
+    if($("bgIncome"))$("bgIncome").value=(b.income!=null?b.income:"");
+    if($("bgIncomeDay"))$("bgIncomeDay").value=(b.incomeDay!=null?b.incomeDay:"");
+    /* 家賃の額・日は固定費 rent を真実とし、無ければ前提のデフォルト */
+    var fx=getFixed(),rent=null;for(var i=0;i<fx.length;i++)if(fx[i].slug==="rent"){rent=fx[i];break;}
+    if($("bgRent"))$("bgRent").value=rent?(rent.amount!=null?rent.amount:""):BUDGET_DEFAULT.rent;
+    if($("bgRentDay"))$("bgRentDay").value=rent?rent.payDay:BUDGET_DEFAULT.rentDay;
+  }
+  function saveBudget(){
+    var inc=parseInt(($("bgIncome").value||"").trim(),10);
+    var incDay=parseInt(($("bgIncomeDay").value||"").trim(),10);
+    var rentV=parseInt(($("bgRent").value||"").trim(),10);
+    var rentDay=parseInt(($("bgRentDay").value||"").trim(),10);
+    if(isNaN(inc)||inc<0){alert("想定の月収を入れてね（0以上）");return;}
+    if(!(incDay>=1&&incDay<=31)){alert("入る日は1〜31で入れてね");return;}
+    if(isNaN(rentV)||rentV<0){alert("家賃を入れてね（0以上）");return;}
+    if(!(rentDay>=1&&rentDay<=31)){alert("家賃の引き落とし日は1〜31で入れてね");return;}
+    setBudget({income:inc,incomeDay:incDay,rentDay:rentDay,rent:rentV});
+    /* 固定費 rent に反映（額・日を同期。無ければ作る＝重複しない） */
+    var fx=getFixed(),found=false;
+    for(var i=0;i<fx.length;i++)if(fx[i].slug==="rent"){fx[i].amount=rentV;fx[i].payDay=rentDay;found=true;break;}
+    if(!found)fx.push({id:uid4(),slug:"rent",name:"家賃（自分の負担）",amount:rentV,category:"その他",payDay:rentDay,method:"",active:true,startYM:"",lastGen:"",note:"前提から自動"});
+    setFixed(fx);Cloud.pushAllTree("fixed",fx);
+    runFixedCosts();refreshWallet();renderFxList();
+    alert("前提を保存した。");
+  }
+
+  /* ====== カード引き落とし予定（cardbill） ====== */
+  var cbEditId="";
+  /* 当期内でまだ来てない（dueDate>=today）カード予定の合計＝ヒーローで先取り */
+  function cardBillsUpcomingSum(cyc,today){
+    var l=getCardBills(),s=0;
+    for(var i=0;i<l.length;i++){var x=l[i];if(cycleKey(x.dueDate)!==cyc)continue;if(ymd(x.dueDate)<today)continue;s+=Number(x.amount)||0;}
+    return s;
+  }
+  function cbResetForm(){
+    cbEditId="";
+    $("cbName").value="";$("cbDue").value="";$("cbAmount").value="";$("cbNote").value="";
+    $("cbSaveBtn").textContent="追加する";$("cbCancelBtn").style.display="none";
+    $("cbEditingTag").style.display="none";$("cbForm").className="fxform";
+  }
+  function cbStartEdit(id){
+    var l=getCardBills(),f=null;for(var i=0;i<l.length;i++)if(String(l[i].id)===String(id)){f=l[i];break;}
+    if(!f)return;
+    cbEditId=id;
+    $("cbName").value=f.cardName||"";$("cbDue").value=f.dueDate||"";
+    $("cbAmount").value=(f.amount!=null?f.amount:"");$("cbNote").value=f.note||"";
+    $("cbSaveBtn").textContent="この内容で更新";$("cbCancelBtn").style.display="";
+    $("cbEditingTag").textContent="「"+(f.cardName||"")+"」を編集中";$("cbEditingTag").style.display="block";
+    $("cbForm").className="fxform editing";$("cbName").focus();
+  }
+  function cbSave(){
+    var name=($("cbName").value||"").trim();
+    if(!name){alert("カード名を入れてね");return;}
+    var due=$("cbDue").value;
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(due)){alert("引き落とし日を入れてね");return;}
+    var amt=Math.round(parseFloat(($("cbAmount").value||"").trim()));
+    if(isNaN(amt)||amt<0){alert("金額を入れてね（0以上）");return;}
+    var note=($("cbNote").value||"").trim();
+    var l=getCardBills();
+    if(cbEditId){
+      for(var i=0;i<l.length;i++)if(String(l[i].id)===String(cbEditId)){l[i].cardName=name;l[i].dueDate=due;l[i].amount=amt;l[i].note=note;break;}
+    }else{
+      l.push({id:uid4(),cardName:name,dueDate:due,amount:amt,note:note});
+    }
+    setCardBills(l);Cloud.pushAllTree("cardbill",l);
+    cbResetForm();refreshWallet();
+  }
+  function cbDel(id){
+    if(!confirm("このカード予定を削除する？"))return;
+    var l=getCardBills(),o=[];for(var i=0;i<l.length;i++)if(String(l[i].id)!==String(id))o.push(l[i]);
+    setCardBills(o);Cloud.pushAllTree("cardbill",o);
+    if(cbEditId===id)cbResetForm();
+    refreshWallet();
+  }
+  /* 設定内リスト（編集・削除つき）＋本体「この先 出ていくお金」 */
+  function renderCardBills(){
+    var l=getCardBills().slice(),today=todayStr(),tm=cycleKey(today);
+    l.sort(function(a,b){return String(a.dueDate)<String(b.dueDate)?-1:(String(a.dueDate)>String(b.dueDate)?1:0);});
+    /* 本体：今日以降の予定だけ（過ぎた分は「出ていく予定」ではない） */
+    var upcoming=[],sum=0;
+    for(var i=0;i<l.length;i++){var x=l[i];if(ymd(x.dueDate)<today)continue;upcoming.push(x);sum+=Number(x.amount)||0;}
+    var bills=$("wBills"),bl=$("wBillsList"),bs=$("wBillsSum");
+    if(bills){
+      if(!upcoming.length){bills.style.display="none";}
+      else{
+        bills.style.display="block";if(bs)bs.textContent=yen(sum);
+        var bh="";
+        for(var j=0;j<upcoming.length;j++){var y=upcoming[j],soon=(cycleKey(y.dueDate)===tm)?" soon":"";
+          var nm=String(y.cardName||"").replace(/</g,"&lt;")+(y.note?' <span class="tm">'+String(y.note).replace(/</g,"&lt;")+'</span>':"");
+          bh+='<div class="b-row'+soon+'"><span class="b-date">'+String(y.dueDate).slice(5).replace("-","/")+'</span><span class="b-name">'+nm+'</span><span class="b-amt">'+yen(y.amount)+'</span></div>';
+        }
+        if(bl)bl.innerHTML=bh;
+      }
+    }
+    /* 設定内：全件（過去含む）に編集/削除 */
+    var cb=$("cbList");if(cb){
+      if(!l.length)cb.innerHTML='<div class="empty">まだ無し</div>';
+      else{var ch="";
+        for(var k=0;k<l.length;k++){var z=l[k],id=String(z.id).replace(/"/g,"&quot;"),soon2=(cycleKey(z.dueDate)===tm&&ymd(z.dueDate)>=today)?" soon":"";
+          var nm2=String(z.cardName||"").replace(/</g,"&lt;")+(z.note?' <span class="tm">'+String(z.note).replace(/</g,"&lt;")+'</span>':"");
+          ch+='<div class="b-row'+soon2+'"><span class="b-date">'+String(z.dueDate).slice(5).replace("-","/")+'</span><span class="b-name">'+nm2+'</span><span class="b-amt">'+yen(z.amount)+'</span>'
+            +'<button type="button" class="fxedit" data-id="'+id+'">編集</button>'
+            +'<button type="button" class="b-del" data-id="'+id+'">削除</button></div>';
+        }
+        cb.innerHTML=ch;
+        var ed=cb.querySelectorAll(".fxedit");for(var a=0;a<ed.length;a++){(function(b){b.addEventListener("click",function(){cbStartEdit(b.getAttribute("data-id"));});})(ed[a]);}
+        var dl=cb.querySelectorAll(".b-del");for(var d=0;d<dl.length;d++){(function(b){b.addEventListener("click",function(){cbDel(b.getAttribute("data-id"));});})(dl[d]);}
+      }
+    }
+  }
+
+  /* ====== ヒーロー：今日 これだけは安心して使える ======
+     dispo = 想定月収 − 当期支出合計(固定費auto含む・発生済) − 当期内まだ来てない固定費 − 当期内まだ来てないカード予定
+     今日使える = dispo ÷ 締めまでの残り日数(今日含む)   ※負/0除算ガード */
+  function upcomingFixedSum(cyc,today){
+    var fx=getFixed(),s=0;
+    for(var i=0;i<fx.length;i++){var f=fx[i];
+      if(!f.active)continue;
+      if(f.amount===null||f.amount===undefined||f.amount==="")continue; /* 変動は読めないので入れない */
+      var pay=+f.payDay;if(!(pay>=1&&pay<=31))continue;
+      var dateStr=cycleDate(cyc,pay);
+      if(ymd(dateStr)<=today)continue; /* 到来済みは当期支出に既に計上されてる＝二重しない */
+      s+=Number(f.amount)||0;
+    }
+    return s;
+  }
+  function renderHero(list,tm,curExp,dd){
+    var b=getBudget(),income=(b.income!=null?+b.income:BUDGET_DEFAULT.income);
+    var today=todayStr();
+    var futFixed=upcomingFixedSum(tm,today);
+    var futCard=cardBillsUpcomingSum(tm,today);
+    var dispo=income - curExp - futFixed - futCard;
+    /* 締めまでの残り日数(今日含む)。daysToDeadline=次の25日までの日数＝当期に残る日数(今日含む)。0除算ガード */
+    var remainDays=Math.max(1,dd);
+    var perDay=dispo/remainDays;
+    var hv=$("wDispoToday"),hs=$("wDispoSub"),hn=$("wDispoNote"),hero=$("wHero");
+    if(hv){
+      if(dispo<0){
+        hv.className="h-v calm";hv.textContent=yen(Math.floor(perDay));
+        if(hn){hn.style.display="block";hn.textContent="今月は貯蓄から立て替える月（想定内）。焦らず、決めた範囲で。";}
+      }else{
+        hv.className="h-v";hv.textContent=yen(Math.floor(perDay));
+        if(hn)hn.style.display="none";
+      }
+    }
+    if(hs)hs.textContent="締めまで あと"+Math.max(1,dd)+"日（今日含む）／残り "+yen(dispo);
+  }
+
+  /* ====== カード返済の山バー（当期に出ていくカード総額のうち、まだ来てない割合） ====== */
+  function renderMountain(list,tm){
+    var panel=$("wMountainPanel");if(!panel)return;
+    var today=todayStr();
+    var l=getCardBills(),total=0,upcoming=0;
+    for(var i=0;i<l.length;i++){var x=l[i];if(cycleKey(x.dueDate)!==tm)continue;
+      var a=Number(x.amount)||0;total+=a;if(ymd(x.dueDate)>=today)upcoming+=a;}
+    if(total<=0){panel.style.display="none";return;}
+    panel.style.display="block";
+    var paid=total-upcoming,pct=Math.round(paid/total*100);if(pct<0)pct=0;if(pct>100)pct=100;
+    var fill=$("wMtnFill");if(fill)fill.style.width=pct+"%";
+    var v=$("wMtnVal");if(v)v.textContent=pct+"%（残り "+yen(upcoming)+"）";
+  }
+
+  /* ====== 橋一言（禁煙の節約・前向き。赤字でも相殺表示しない＝悪化を止めてる事実だけ） ====== */
+  function renderBridge(){
+    var box=$("wBridge");if(!box)return;
+    var saved=getSaved();
+    if(saved<=0){box.style.display="none";box.innerHTML="";return;}
+    box.style.display="block";
+    box.textContent="我慢した分で "+yen(saved)+" 。出費が増える月でも、ここは悪化を止められてる。";
+  }
+
+  /* ====== 固定費・サブスク ====== */
+  function getFixed(){try{return JSON.parse(localStorage.getItem("cotonoha_fixed")||"[]");}catch(e){return [];}}
+  function setFixed(l){try{localStorage.setItem("cotonoha_fixed",JSON.stringify(l||[]));}catch(e){}}
+  /* 初回のみシード。slug/idは既に手動投入済みの財布エントリと一致させ重複を防ぐ。 */
+  function seedFixed(){
+    var l=getFixed();if(l.length)return;
+    var seed=[]; /* 公開ソースには実額を置かない＝本人がアプリで追加（非公開クラウドに同期） */
+    setFixed(seed);Cloud.pushAllTree("fixed",seed);
+  }
+  /* startYM・lastGen・cycleKey はすべて「月度キー（25日起算・cycleKey と同体系）」。
+     payDay<25 の費目は実日付が翌月にずれるため、startYM は請求初回の実日付の月度キーを入れる
+     （例：2026-07-17 初回・payDay17 → cycleKey("2026-07-17")="2026-06"）。 */
+  /* 自動計上（冪等・lastGen前進のみ・削除を尊重） */
+  function runFixedCosts(){
+    var fx=getFixed();if(!fx.length)return;
+    var wl=getWallet(),idx={};for(var w=0;w<wl.length;w++)idx[wl[w].id]=1;
+    var curCyc=cycleKey(todayStr()),today=todayStr(),changedFx=false,changedWl=false;
+    for(var i=0;i<fx.length;i++){
+      var f=fx[i];
+      if(!f.active)continue;
+      if(f.amount===null||f.amount===undefined||f.amount==="")continue; /* 変動はリマインドのみ */
+      var pay=+f.payDay;if(!(pay>=1&&pay<=31))continue;
+      /* 開始サイクル：lastGen空なら当期だけ（基準セット）／あれば次サイクルから */
+      var startCyc;
+      if(f.lastGen){startCyc=nextCycle(f.lastGen);}
+      else{startCyc=curCyc;}
+      /* startYM より前は生成しない（lastGen空でも下限を尊重） */
+      if(f.startYM&&startCyc<f.startYM)startCyc=f.startYM;
+      var cyc=startCyc,guard=0,lastGenNew=f.lastGen||"";
+      while(cyc<=curCyc&&guard<60){
+        guard++;
+        if(!(f.startYM&&cyc<f.startYM)){
+          var dateStr=cycleDate(cyc,pay);
+          if(dateStr<=today){ /* payDayが今日以前のサイクルのみ */
+            var wid="wl|fixed|"+f.slug+"-"+cyc;
+            if(!idx[wid]){
+              var rec={id:wid,date:dateStr,type:"支出",amount:f.amount,category:f.category||"その他",item:f.name,memo:"固定費（自動）"+(f.method?"・"+f.method:"")};
+              wl.unshift(rec);idx[wid]=1;Cloud.pushOne("wallet",rec);changedWl=true;
+            }
+            lastGenNew=cyc; /* 生成有無にかかわらず処理済みとして前進＝削除復活を防ぐ */
+          }
+        }
+        cyc=nextCycle(cyc);
+      }
+      if(lastGenNew&&lastGenNew!==f.lastGen){f.lastGen=lastGenNew;changedFx=true;}
+    }
+    if(changedWl)setWallet(wl);
+    if(changedFx){setFixed(fx);Cloud.pushAllTree("fixed",fx);}
+  }
+  /* 変動費（amount=null）の金額待ちリマインド：当期payDayが今日以前で、当期にその固定費の手動計上がまだ無いもの */
+  function getFixedReminders(){
+    var fx=getFixed(),wl=getWallet(),curCyc=cycleKey(todayStr()),today=todayStr(),out=[];
+    for(var i=0;i<fx.length;i++){
+      var f=fx[i];
+      if(!f.active)continue;
+      if(!(f.amount===null||f.amount===undefined||f.amount===""))continue; /* 固定額は対象外 */
+      var pay=+f.payDay;if(!(pay>=1&&pay<=31))continue;
+      if(f.startYM&&curCyc<f.startYM)continue;
+      var dateStr=cycleDate(curCyc,pay);
+      if(dateStr>today)continue; /* payDay未到来は出さない */
+      /* 当期に同名の手動計上があるか（item一致・支出） */
+      var has=false;
+      for(var w=0;w<wl.length;w++){var x=wl[w];
+        if(x.type==="収入")continue;if(cycleKey(x.date)!==curCyc)continue;
+        if((x.item||"")===f.name){has=true;break;}
+      }
+      if(!has)out.push(f);
+    }
+    return out;
+  }
+  /* 固定費フォームの費目チップ（WEXP流用）＆編集状態 */
+  var fxCat="",fxEditId="";
+  function buildFxCats(){
+    var box=$("fxCatChips"),html="";
+    for(var i=0;i<WEXP.length;i++)html+='<span class="chip fxcat" data-v="'+WEXP[i].replace(/"/g,"&quot;")+'">'+WEXP[i].replace(/</g,"&lt;")+'</span>';
+    box.innerHTML=html;
+    var chips=box.querySelectorAll(".fxcat");
+    for(var j=0;j<chips.length;j++){(function(c){c.addEventListener("click",function(){
+      fxCat=c.getAttribute("data-v");var all=box.querySelectorAll(".fxcat");for(var k=0;k<all.length;k++){if(all[k].getAttribute("data-v")===fxCat)all[k].classList.add("sel");else all[k].classList.remove("sel");}
+    });})(chips[j]);}
+  }
+  function setFxCat(v){fxCat=v||"";var all=$("fxCatChips").querySelectorAll(".fxcat");for(var k=0;k<all.length;k++){if(all[k].getAttribute("data-v")===fxCat&&fxCat)all[k].classList.add("sel");else all[k].classList.remove("sel");}}
+  function slugify(s){s=String(s||"").trim().toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");return s||("fx-"+uid4());}
+  function fxResetForm(){
+    fxEditId="";fxCat="";
+    $("fxName").value="";$("fxAmount").value="";$("fxPayDay").value="";$("fxMethod").value="";
+    setFxCat("");
+    $("fxSaveBtn").textContent="追加する";$("fxCancelBtn").style.display="none";
+    $("fxEditingTag").style.display="none";$("fxForm").className="fxform";
+  }
+  function fxStartEdit(id){
+    var fx=getFixed(),f=null;for(var i=0;i<fx.length;i++)if(fx[i].id===id){f=fx[i];break;}
+    if(!f)return;
+    fxEditId=id;
+    $("fxName").value=f.name||"";
+    $("fxAmount").value=(f.amount===null||f.amount===undefined||f.amount==="")?"":f.amount;
+    $("fxPayDay").value=f.payDay||"";
+    $("fxMethod").value=f.method||"";
+    setFxCat(f.category||"");
+    $("fxSaveBtn").textContent="この内容で更新";$("fxCancelBtn").style.display="";
+    $("fxEditingTag").textContent="「"+(f.name||"")+"」を編集中";$("fxEditingTag").style.display="block";
+    $("fxForm").className="fxform editing";
+    $("fxName").focus();
+  }
+  function fxSave(){
+    var name=($("fxName").value||"").trim();
+    if(!name){alert("名前を入れてね");return;}
+    if(!fxCat){alert("費目を選んでね");return;}
+    var pay=parseInt($("fxPayDay").value,10);
+    if(!(pay>=1&&pay<=31)){alert("決済日は1〜31で入れてね");return;}
+    var av=($("fxAmount").value||"").trim(),amount=(av==="")?null:Math.round(parseFloat(av));
+    if(amount!==null&&(isNaN(amount)||amount<0)){alert("金額は0以上か、空（変動）にしてね");return;}
+    var method=($("fxMethod").value||"").trim();
+    var fx=getFixed();
+    if(fxEditId){
+      for(var i=0;i<fx.length;i++)if(fx[i].id===fxEditId){
+        fx[i].name=name;fx[i].amount=amount;fx[i].category=fxCat;fx[i].payDay=pay;fx[i].method=method;break;
+      }
+    }else{
+      fx.push({id:uid4(),slug:slugify(name),name:name,amount:amount,category:fxCat,payDay:pay,method:method,active:true,startYM:"",lastGen:"",note:""});
+    }
+    setFixed(fx);Cloud.pushAllTree("fixed",fx);
+    fxResetForm();
+    runFixedCosts();refreshWallet();renderFxList();
+  }
+  function fxToggle(id){
+    var fx=getFixed();for(var i=0;i<fx.length;i++)if(fx[i].id===id){fx[i].active=!fx[i].active;break;}
+    setFixed(fx);Cloud.pushAllTree("fixed",fx);
+    runFixedCosts();refreshWallet();renderFxList();
+  }
+  function fxDel(id){
+    if(!confirm("この固定費を削除する？（過去に自動計上された明細は残ります）"))return;
+    var fx=getFixed(),o=[];for(var i=0;i<fx.length;i++)if(fx[i].id!==id)o.push(fx[i]);
+    setFixed(o);Cloud.pushAllTree("fixed",o);
+    if(fxEditId===id)fxResetForm();
+    renderFxList();
+  }
+  function renderFxList(){
+    var box=$("fxList");if(!box)return;
+    var fx=getFixed(),h="";
+    if(!fx.length){box.innerHTML='<div class="empty">まだ無し</div>';return;}
+    for(var i=0;i<fx.length;i++){var f=fx[i];
+      var isVar=(f.amount===null||f.amount===undefined||f.amount==="");
+      var amtH=isVar?'<span class="fxamt var">変動</span>':'<span class="fxamt">'+yen(f.amount)+'</span>';
+      var sub=(f.category||"")+'・毎月'+f.payDay+'日'+(f.method?'・'+f.method:'');
+      var id=String(f.id).replace(/"/g,"&quot;");
+      h+='<div class="fxitem'+(f.active?'':' off')+'">'
+        +'<div class="fxmid"><div class="fxname">'+String(f.name||"").replace(/</g,"&lt;")+'</div><div class="fxsub">'+sub.replace(/</g,"&lt;")+'</div></div>'
+        +amtH
+        +'<button type="button" class="fxtgl '+(f.active?'on':'offc')+'" data-id="'+id+'">'+(f.active?'有効':'停止中')+'</button>'
+        +'<button type="button" class="fxedit" data-id="'+id+'">編集</button>'
+        +'<button type="button" class="fxdel" data-id="'+id+'">削除</button></div>';
+    }
+    box.innerHTML=h;
+    var tg=box.querySelectorAll(".fxtgl");for(var a=0;a<tg.length;a++){(function(b){b.addEventListener("click",function(){fxToggle(b.getAttribute("data-id"));});})(tg[a]);}
+    var ed=box.querySelectorAll(".fxedit");for(var c=0;c<ed.length;c++){(function(b){b.addEventListener("click",function(){fxStartEdit(b.getAttribute("data-id"));});})(ed[c]);}
+    var dl=box.querySelectorAll(".fxdel");for(var d=0;d<dl.length;d++){(function(b){b.addEventListener("click",function(){fxDel(b.getAttribute("data-id"));});})(dl[d]);}
+  }
+  /* 金額待ちリマインドの描画（タップで入力フォームに費目/名前をプリフィル） */
+  function renderFixedReminders(){
+    var box=$("wRemind");if(!box)return;
+    var rem=getFixedReminders();
+    if(!rem.length){box.style.display="none";box.innerHTML="";return;}
+    var h="";
+    for(var i=0;i<rem.length;i++){var f=rem[i],id=String(f.id).replace(/"/g,"&quot;");
+      h+='<div class="r" data-id="'+id+'"><div class="rname">'+String(f.name||"").replace(/</g,"&lt;")+'：金額が出たら入れてね（今期）</div><div class="rsub">毎月'+f.payDay+'日'+(f.method?'・'+f.method:'')+'（タップで入力フォームへ）</div></div>';
+    }
+    box.innerHTML=h;box.style.display="block";
+    var rs=box.querySelectorAll(".r");for(var j=0;j<rs.length;j++){(function(b){b.addEventListener("click",function(){fxPrefillFromReminder(b.getAttribute("data-id"));});})(rs[j]);}
+  }
+  /* リマインドをタップ→支出フォームに費目/名前/決済日をプリフィル（金額は空＝本人が入れる） */
+  function fxPrefillFromReminder(id){
+    var fx=getFixed(),f=null;for(var i=0;i<fx.length;i++)if(fx[i].id===id){f=fx[i];break;}
+    if(!f)return;
+    setWType("支出");
+    setWCat(f.category||"");
+    $("wItem").value=f.name||"";
+    $("wDate").value=cycleDate(cycleKey(todayStr()),+f.payDay);
+    $("wMemo").value=f.method?("固定費・"+f.method):"固定費";
+    $("wAmount").value="";$("wAmount").focus();
+    $("wAmount").scrollIntoView&&$("wAmount").scrollIntoView({behavior:"smooth",block:"center"});
   }
 
   function showMode(name){
@@ -337,7 +1073,7 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
       for(L=0;L<ls.length;L++)for(j=0;j<ls[L].length;j++){x=ls[L][j];id=recId(x);if(!map[id]){map[id]=x;order.push(id);}}
       var out=[];for(var i=0;i<order.length;i++)out.push(map[order[i]]);
       out.sort(function(p,q){return String(q[tf]||"")<String(p[tf]||"")?-1:(String(q[tf]||"")>String(p[tf]||"")?1:0);});return out;}
-    var TREES=[{name:"smoking",tf:"datetime",get:getSmoke,set:setSmoke,refresh:refreshSmoke},{name:"wallet",tf:"date",get:getWallet,set:setWallet,refresh:refreshWallet}];
+    var TREES=[{name:"smoking",tf:"datetime",get:getSmoke,set:setSmoke,refresh:refreshSmoke},{name:"wallet",tf:"date",get:getWallet,set:setWallet,refresh:refreshWallet},{name:"fixed",tf:"id",get:getFixed,set:setFixed,refresh:function(){renderFxList();refreshWallet();}}];
     function init(){try{
       if(typeof firebase==="undefined"||!firebase.initializeApp){setState("CDN読込に失敗（オフラインで通常動作）");return;}
       if(!firebase.apps||!firebase.apps.length)firebase.initializeApp(FB);
@@ -352,31 +1088,52 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
         db.ref("users/"+uid+"/"+T.name).once("value").then(function(snap){
           var cloud=[],val=snap.val();if(val)for(var k in val)if(val.hasOwnProperty(k))cloud.push(val[k]);
           var merged=merge(T.get(),cloud,T.tf);T.set(merged);T.refresh();pushAll(T.name,merged);
-          done++;if(done>=tot){setState("同期済み（禁煙"+getSmoke().length+"・財布"+getWallet().length+"）");syncing=false;}
+          done++;if(done>=tot){setState("同期済み（禁煙"+getSmoke().length+"・財布"+getWallet().length+"・固定費"+getFixed().length+"）");syncing=false;}
         }).catch(function(){done++;setState("読込エラー（ローカルで動作）");if(done>=tot)syncing=false;});
       }catch(e){done++;if(done>=tot)syncing=false;}});}
     function pushAll(tree,list){if(!ready||!uid)return;try{var o={};for(var i=0;i<list.length;i++)o[safeKey(recId(list[i]))]=list[i];db.ref("users/"+uid+"/"+tree).set(o).catch(function(){});}catch(e){}}
     function pushOne(tree,rec){if(!ready||!uid||!rec)return;try{db.ref("users/"+uid+"/"+tree+"/"+safeKey(recId(rec))).set(rec).catch(function(){});}catch(e){}}
     function deleteOne(tree,id){if(!ready||!uid||!id)return;try{db.ref("users/"+uid+"/"+tree+"/"+safeKey(id)).remove().catch(function(){});}catch(e){}}
-    return {init:init,login:login,logout:logout,pushOne:pushOne,deleteOne:deleteOne,isOn:function(){return !!(ready&&uid);}};
+    return {init:init,login:login,logout:logout,pushOne:pushOne,pushAllTree:pushAll,deleteOne:deleteOne,isOn:function(){return !!(ready&&uid);}};
   })();
 
   /* 初期化 */
   buildTriggers();
+  buildGoalChips();
+  var gin=$("goalInput");
+  if(gin){var goalApply=function(){var v=parseInt(gin.value,10);if(v&&v>0){setGoal(v);buildGoalChips();refreshSmoke();}};
+    gin.addEventListener("change",goalApply);gin.addEventListener("blur",goalApply);}
   $("smokeBtn").addEventListener("click",function(){addSmoke("吸った");});
   $("resistBtn").addEventListener("click",function(){addSmoke("我慢");});
   $("wDate").value=todayStr();
+  buildWPay();
   setWType("支出");
   $("wTypeOut").addEventListener("click",function(){setWType("支出");});
   $("wTypeIn").addEventListener("click",function(){setWType("収入");});
   $("wSaveBtn").addEventListener("click",saveWallet);
   $("wCsvBtn").addEventListener("click",exportWCSV);
   $("wMonthSel").addEventListener("change",refreshWallet);
+  /* 固定費・サブスク（家賃seedより前＝seedFixedのlength判定を汚さない） */
+  seedFixed();
+  buildFxCats();
+  $("fxSaveBtn").addEventListener("click",fxSave);
+  $("fxCancelBtn").addEventListener("click",fxResetForm);
+  renderFxList();
+  /* 前提（収入・家賃）＋家賃を固定費にseed */
+  seedBudget();
+  seedRent();
+  buildBudgetForm();
+  $("bgSaveBtn").addEventListener("click",saveBudget);
+  /* カード引き落とし予定 */
+  seedCardBills();
+  $("cbSaveBtn").addEventListener("click",cbSave);
+  $("cbCancelBtn").addEventListener("click",cbResetForm);
+  renderCardBills();
   var mb=document.querySelectorAll(".modebtn");
   for(var i=0;i<mb.length;i++){(function(b){b.addEventListener("click",function(){showMode(b.getAttribute("data-mode"));});})(mb[i]);}
   var lin=$("loginBtn");if(lin)lin.addEventListener("click",function(){Cloud.login();});
   var lout=$("logoutBtn");if(lout)lout.addEventListener("click",function(){Cloud.logout();});
-  refreshSmoke();refreshWallet();
+  refreshSmoke();refreshWallet();renderFxList();
   Cloud.init();
 })();
 </script>
