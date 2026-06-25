@@ -177,7 +177,7 @@
 <body>
   <div class="err" id="err"></div>
   <a href="https://tsuyoshi0417.github.io/" style="display:inline-block;font-size:13px;color:var(--accent);text-decoration:none;margin-bottom:6px">← ホーム</a>
-  <h1>言ノ葉 個人 <span style="color:var(--sub);font-size:12px">v4.1</span></h1>
+  <h1>言ノ葉 個人 <span style="color:var(--sub);font-size:12px">v4.2</span></h1>
   <div class="tag">つよしさん専用｜本人ログインの裏＝あなただけ</div>
 
   <div class="modebar" id="modebar">
@@ -242,7 +242,10 @@
       <div id="rank"><div class="empty">まだ無し</div></div>
     </div>
     <div class="panel">
-      <label>今日の記録</label>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <label style="margin:0">今日の記録</label>
+        <button type="button" id="sCsvBtn" style="flex:0 0 auto;width:auto;padding:8px 14px;font-size:13px">CSV出力（全記録）</button>
+      </div>
       <div class="list" id="todayList"><div class="empty">今日はまだ無し</div></div>
     </div>
     <details class="cfg"><summary>⚙ 設定（禁煙の前提）</summary>
@@ -840,6 +843,15 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
     var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="個人収支_"+todayStr()+".csv";
     document.body.appendChild(a);a.click();document.body.removeChild(a);
   }
+  /* 禁煙データのCSV書き出し（全記録・吸った/乗り越えた） */
+  function exportSmokeCSV(){
+    var l=getSmoke();function c(v){return String(nn(v)).replace(/[\n,]/g," ");}
+    var lines=[["日時","結果","引き金"].join(",")];
+    for(var i=0;i<l.length;i++){var x=l[i];var lbl=(x.type==="吸った")?"吸った":"乗り越えた";lines.push([c(x.datetime),lbl,c(x.trigger)].join(","));}
+    var blob=new Blob(["﻿"+lines.join("\n")],{type:"text/csv"});
+    var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="禁煙記録_"+todayStr()+".csv";
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+  }
 
   /* ====== 前提フォーム（収入・家賃）＋家賃の固定費seed ====== */
   /* 家賃は「固定費・サブスク」に slug:"rent" で1本だけ持たせ、自動計上に乗せる（二重定義を避ける）。 */
@@ -1387,6 +1399,7 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
   $("wTypeIn").addEventListener("click",function(){setWType("収入");});
   $("wSaveBtn").addEventListener("click",saveWallet);
   $("wCsvBtn").addEventListener("click",exportWCSV);
+  $("sCsvBtn").addEventListener("click",exportSmokeCSV);
   $("wMonthSel").addEventListener("change",refreshWallet);
   /* 固定費・サブスク（家賃seedより前＝seedFixedのlength判定を汚さない） */
   seedFixed();
