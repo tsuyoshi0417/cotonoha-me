@@ -177,7 +177,7 @@
 <body>
   <div class="err" id="err"></div>
   <a href="https://tsuyoshi0417.github.io/" style="display:inline-block;font-size:13px;color:var(--accent);text-decoration:none;margin-bottom:6px">← ホーム</a>
-  <h1>言ノ葉 個人 <span style="color:var(--sub);font-size:12px">v4</span></h1>
+  <h1>言ノ葉 個人 <span style="color:var(--sub);font-size:12px">v4.1</span></h1>
   <div class="tag">つよしさん専用｜本人ログインの裏＝あなただけ</div>
 
   <div class="modebar" id="modebar">
@@ -212,8 +212,9 @@
       <input class="trigother" id="trigOther" placeholder="その他＝何で吸いたくなった？（自由記述）">
       <div class="bigbtns" style="margin-top:12px">
         <button type="button" class="btn-urge" id="urgeBtn">吸いたい</button>
+        <button type="button" class="btn-resist" id="resistBtn">吸わなかった</button>
       </div>
-      <div class="hint">吸いたくなったら、まずこれを押す。<b>2分だけ</b>待てば波は引く。乗り越えた1回も、ちゃんと数える。責めるためじゃない。</div>
+      <div class="hint"><b>吸いたい</b>＝波が来たら押して2分待つ。<b>吸わなかった</b>＝我慢できた時にサッと記録（切らして気合いで耐えてる今みたいな時も）。乗り越えた1回も、ちゃんと数える。</div>
     </div>
 
     <!-- 吸いたい→2分→乗り越えた フロー（「吸いたい」を押すと出る） -->
@@ -558,6 +559,13 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
     setTimeout(function(){closeUrge();},6000);
   }
   function urgeSmokedNow(){addSmoke("吸った",urgeTrig);closeUrge();}
+  /* 「吸わなかった」＝2分フローを待たず、我慢できた瞬間をサッと記録（切らして気合いで耐えてる時も。乗り越えたにカウント） */
+  function resistNow(){
+    var trig=selTrig||"";
+    if(selTrig==="その他"){var ot=($("trigOther").value||"").trim();if(ot)trig=ot;}
+    addSmoke("我慢",trig);
+    showToast("ナイス。吸わずにいられた。今日 乗り越えた "+$("cResist").textContent+"。");
+  }
   function refreshSmoke(){
     var list=getSmoke(),today=todayStr(),smokedAll=0,todaySmoke=0,todayResist=0,tc={};
     for(var i=0;i<list.length;i++){var x=list[i];
@@ -1368,6 +1376,7 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
   if(gin){var goalApply=function(){var v=parseInt(gin.value,10);if(v&&v>0){setGoal(v);buildGoalChips();refreshSmoke();}};
     gin.addEventListener("change",goalApply);gin.addEventListener("blur",goalApply);}
   $("urgeBtn").addEventListener("click",openUrge);
+  $("resistBtn").addEventListener("click",resistNow);
   $("waitBtn").addEventListener("click",startWait);
   $("smokedNowBtn").addEventListener("click",urgeSmokedNow);
   $("giveUpBtn").addEventListener("click",urgeSmokedNow);
