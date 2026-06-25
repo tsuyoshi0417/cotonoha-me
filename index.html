@@ -26,7 +26,10 @@
   .mode{display:none}.mode.active{display:block}
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
   label{display:block;font-size:12px;color:var(--sub);margin:0 0 4px}
-  input,select{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:10px;font-size:16px;font-family:inherit}
+  input,select{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:10px;font-size:16px;font-family:inherit;min-height:46px;line-height:1.4}
+  /* iOSのtype=dateは独自表示で中央寄り＆高さがズレる→numberと同じ左寄せ・同じ高さに標準化 */
+  input[type="date"]{-webkit-appearance:none;appearance:none;text-align:left}
+  input[type="date"]::-webkit-date-and-time-value{text-align:left;margin:0}
   .row{display:flex;gap:10px}.row>div{flex:1}
   button{border:0;border-radius:12px;padding:14px;font-size:16px;font-weight:700;color:var(--ink);background:var(--panel2);border:1px solid var(--line);cursor:pointer;flex:1;font-family:inherit}
   button:active{transform:scale(.98)}
@@ -177,7 +180,7 @@
 <body>
   <div class="err" id="err"></div>
   <a href="https://tsuyoshi0417.github.io/" style="display:inline-block;font-size:13px;color:var(--accent);text-decoration:none;margin-bottom:6px">← ホーム</a>
-  <h1>言ノ葉 個人 <span style="color:var(--sub);font-size:12px">v4.2</span></h1>
+  <h1>言ノ葉 個人 <span style="color:var(--sub);font-size:12px">v4.3</span></h1>
   <div class="tag">つよしさん専用｜本人ログインの裏＝あなただけ</div>
 
   <div class="modebar" id="modebar">
