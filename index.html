@@ -171,6 +171,9 @@
   .urge-sub{font-size:13px;color:var(--sub);text-align:center;margin-top:14px;line-height:1.6}
   .win{font-size:30px;font-weight:700;color:var(--accent2);text-align:center;margin:10px 0 6px}
   .win-sub{font-size:14px;color:var(--ink);text-align:center;line-height:1.8}
+  #wdBanner{border-left:4px solid var(--teal,#3d7a8a)}
+  .wd-title{font-weight:700;font-size:15px;margin-bottom:4px;color:var(--ink)}
+  .wd-sub{font-size:13px;color:var(--sub);line-height:1.7}
   .win-sub b{color:var(--accent2);font-variant-numeric:tabular-nums}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
@@ -196,6 +199,10 @@
       <div class="card"><div class="k">禁煙に向けて</div><div class="v" id="cDays">―</div></div>
       <div class="card"><div class="k">節約額（貯まった）</div><div class="v small" id="cSave">―</div></div>
       <div class="card"><div class="k">今日 吸った</div><div class="v muted" id="cToday">―</div></div>
+    </div>
+    <div class="panel" id="wdBanner" style="display:none">
+      <div class="wd-title" id="wdTitle">―</div>
+      <div class="wd-sub" id="wdSub">―</div>
     </div>
     <div class="panel" id="sGoalPanel">
       <div class="goalbar">
@@ -232,7 +239,7 @@
       <div id="urgeStep2" style="display:none">
         <div class="timer" id="urgeTimer">2:00</div>
         <div class="cope" id="copeText2">―</div>
-        <div class="urge-sub">吸いたい波は2〜3分で必ず引く。今は波の上にいるだけ。</div>
+        <div class="urge-sub">吸いたい波は2〜3分で必ず引く＝気合でなく波待ち。後期の一本は“快”でなく離脱逃れ＝吸っても楽になるだけで、その楽が次の波を呼ぶ。</div>
         <button type="button" class="linklike" id="giveUpBtn">やっぱり吸う（責めない・記録する）</button>
       </div>
       <div id="urgeStep3" style="display:none">
@@ -582,12 +589,12 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
     }
     var days=daysSince(CFG.start),saved=getSaved();
     $("cDays").textContent=days+"日目";$("cToday").textContent=todaySmoke+"本";$("cSave").textContent=yen(saved);$("cResist").textContent=todayResist+"回";
-    renderGoalBar(saved);renderSmokeProgress();
+    renderGoalBar(saved);renderSmokeProgress();renderWithdrawal(list);
     var keys=[];for(var k in tc)if(tc.hasOwnProperty(k))keys.push(k);
     keys.sort(function(a,b){return tc[b].smoke-tc[a].smoke;});
     var rb=$("rank"),rh="";
     if(!keys.length)rh='<div class="empty">まだ無し</div>';
-    else for(var r=0;r<keys.length;r++)rh+='<div class="rank"><span>'+keys[r].replace(/</g,"&lt;")+'</span><b>吸'+tc[keys[r]].smoke+' / 乗り越え'+tc[keys[r]].resist+'</b></div>';
+    else for(var r=0;r<keys.length;r++){var tk=tc[keys[r]],tot=tk.smoke+tk.resist,wr=tot?Math.round(tk.resist/tot*100):0;rh+='<div class="rank"><span>'+keys[r].replace(/</g,"&lt;")+'</span><b>乗り越え '+tk.resist+'/'+tot+'（'+wr+'%）</b></div>';}
     rb.innerHTML=rh;
     var lb=$("todayList"),lh="",td=list.filter(function(x){return ymd(x.datetime)===today;});
     if(!td.length)lh='<div class="empty">今日はまだ無し</div>';
@@ -618,6 +625,21 @@ window.onerror=function(m,s,l){var e=document.getElementById("err");if(e){e.styl
     var v=$("spVal");if(v)v.textContent=pct+"%";
     var sub=$("spSub");if(sub)sub.textContent=(done>=total)?(dnum+"日目・目標日に到達"):(dnum+"日目／目標まであと"+remain+"日");
   }
+  /* 離脱ピークの励まし（HG-074 依存の反報酬＝後期は離脱逃れ／離脱のつらさは数日でピーク越え＝意志でなく薬理） */
+  function renderWithdrawal(list){
+    var b=$("wdBanner");if(!b)return;
+    var last=null;
+    for(var i=0;i<list.length;i++){if(list[i].type==="吸った"){var d=new Date(String(list[i].datetime).replace(/-/g,"/"));if(!isNaN(d.getTime())&&(!last||d>last))last=d;}}
+    if(!last){b.style.display="none";return;}
+    var hrs=(Date.now()-last.getTime())/3600000;if(hrs<0)hrs=0;
+    var t=$("wdTitle"),s=$("wdSub"),dur=fmtDur(hrs);
+    if(hrs<24){t.textContent="🌊 今は離脱がいちばん強い時間帯";s.innerHTML="最後の一本から <b>"+dur+"</b>。吸いたい波は<b>数分で必ず引く</b>＝気合でなく、波をやり過ごすだけ。";}
+    else if(hrs<72){t.textContent="🔥 今が離脱の山（24〜72時間がピーク）";s.innerHTML="最後の一本から <b>"+dur+"</b>。つらさは<b>意志の弱さでなくニコチン離脱＝薬理</b>。山は数日で必ず越える＝今いちばんしんどい所にいる。";}
+    else if(hrs<24*14){t.textContent="✅ 離脱の山は越えた";s.innerHTML="最後の一本から <b>"+dur+"</b>。ニコチンはもう抜けてきてる。ここからは“快”でなく<b>習慣のきっかけ</b>との戦い＝引き金を断つフェーズ。";}
+    else{t.textContent="✅ ニコチン依存はほぼ抜けた";s.innerHTML="最後の一本から <b>"+dur+"</b>。体の依存は終了。残るは手癖・場面の習慣だけ＝きっかけ対策が効く。";}
+    b.style.display="block";
+  }
+  function fmtDur(hrs){var h=Math.floor(hrs);if(h<1)return Math.floor(hrs*60)+"分";if(h<48)return h+"時間";var d=Math.floor(h/24);return d+"日"+(h%24)+"時間";}
   /* 設定内：ゴール額チップ＋自由入力 */
   function buildGoalChips(){
     var box=$("goalChips");if(!box)return;var cur=getGoal(),html="";
